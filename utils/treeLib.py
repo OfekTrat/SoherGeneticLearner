@@ -3,7 +3,7 @@ from random import randint, choice
 from data_classes.DecisionTree.DecisionTreeAgent import DTA
 
 
-TREE_CHOICES = ['0', '1', '2']
+TREE_CHOICES = [0, 1, 2]
 
 
 def mutate_tree(tree_agent: DTA):
@@ -18,11 +18,11 @@ def mutate_tree(tree_agent: DTA):
 
     while continue_iter:
         for child in tmp_node.children:
-            if type(child.name) == int:  # Checks if the child is a node or an end branch
+            if type(child.name) == str:  # Checks if the child is a node or an end branch
                 queue.append(child)
             else:
                 if count == chosen_leaf:
-                    child.name = choice(TREE_CHOICES) + child.name[1:]
+                    child.name = choice(TREE_CHOICES)
                     continue_iter = False
                 count += 1
 
@@ -76,3 +76,21 @@ def converge_trees(tree1: DTA, tree2: DTA) -> tuple:
     tree2_copy.prune_tree()
 
     return tree1_copy, tree2_copy
+
+
+def rolling_score(score):
+    sum_score = (score["score"] - score["score"].min()).sum()
+    score["Chance"] = (score["score"] - score["score"].min()) / sum_score
+    score = score.sort_values(by="score", ignore_index=True)
+    score["newChance"] = 0
+
+    for i in range(len(score)):
+        score.loc[i, "newChance"] = score.iloc[:i+1]["Chance"].sum()
+
+    score["Chance"] = score["newChance"]
+    score = score.drop(columns=["newChance"])
+    return score.sort_values(by="Chance", ascending=False, ignore_index=True)
+
+
+def get_tree_id_by_chance(score, chance):
+    return int(score.loc[score["Chance"] > chance].iloc[-1]["treeID"])
