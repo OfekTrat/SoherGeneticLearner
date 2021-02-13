@@ -18,14 +18,13 @@ class StochasticAgent(Agent):
         self.k_window_size = k_window_size
         self.d_window_size = d_window_size
 
-    def get_signal(self, data):
-        results = self._calc_stochastic(data)
+    @staticmethod
+    def get_signal(prepared_data):
+        current_k = prepared_data["k_fast"].iloc[-1]
+        current_slow_d = prepared_data["d_slow"].iloc[-1]
 
-        current_k = results["k_fast"].iloc[-1]
-        current_slow_d = results["d_slow"].iloc[-1]
-
-        previous_k = results["k_fast"].iloc[-2]
-        previous_d = results["d_slow"].iloc[-2]
+        previous_k = prepared_data["k_fast"].iloc[-2]
+        previous_d = prepared_data["d_slow"].iloc[-2]
 
         if previous_k < previous_d and current_slow_d < current_k < 20:
             return 1
@@ -34,7 +33,7 @@ class StochasticAgent(Agent):
         else:
             return 0
 
-    def _calc_stochastic(self, data):
+    def prepare_data(self, data):
         copy = data.copy()
 
         copy["low_min"] = data['Low'].rolling(self.k_window_size).min()
@@ -44,7 +43,9 @@ class StochasticAgent(Agent):
         copy["d_fast"] = copy["k_fast"].rolling(self.d_window_size).mean()
         copy["d_slow"] = copy["d_fast"].rolling(self.d_window_size).mean()
 
-        return copy
+        data["k_fast"] = copy["k_fast"]
+        data["d_fast"] = copy["d_fast"]
+        data["d_slow"] = copy["d_slow"]
 
     def id(self):
         return "stochastic_id_" + str(self.d_window_size) + "-" + str(self.k_window_size)

@@ -10,11 +10,13 @@ N_STOCKS = 10
 
 
 def fitness_tree(tree: DTA, data: DataFrame, window=WINDOW, n_stocks=N_STOCKS):
+    data_copy = data.copy()
+    tree.prepare_data(data_copy)
     amount = 0
     is_invested = False
 
-    for i in range(window, len(data)):
-        data_slice = data.iloc[i-window:i].copy()
+    for i in range(window, len(data_copy)):
+        data_slice = data_copy.iloc[i - window:i].copy()
         signal = tree.run(data_slice)
 
         if signal == 1 and not is_invested:
@@ -32,7 +34,7 @@ def fitness_tree(tree: DTA, data: DataFrame, window=WINDOW, n_stocks=N_STOCKS):
     return amount
 
 
-def fitness_agent(agent, data, window=30, n_stocks=10):
+def fitness_agent(agent, data, window=WINDOW, n_stocks=N_STOCKS):
     amount = 0
     is_invested = False
 

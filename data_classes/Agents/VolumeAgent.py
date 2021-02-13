@@ -19,15 +19,16 @@ class VolumeAgent(Agent):
         }
         self.n_outputs = 2
 
-    def get_signal(self, data: pd.DataFrame) -> int:
-        data_copy = data.copy()
-        data_copy["sma_small"] = data_copy["Volume"].rolling(self.small_window).mean()
-        data_copy["sma_large"] = data_copy["Volume"].rolling(self.large_window).mean()
-
-        if data_copy.iloc[-1]["sma_small"] > data_copy.iloc[-1]["sma_large"]:
+    @staticmethod
+    def get_signal(prepared_data: pd.DataFrame) -> int:
+        if prepared_data.iloc[-1]["sma_vol_small"] > prepared_data.iloc[-1]["sma_vol_large"]:
             return 1
         else:
             return 0
+
+    def prepare_data(self, data):
+        data["sma_vol_small"] = data["Volume"].rolling(self.small_window).mean()
+        data["sma_vol_large"] = data["Volume"].rolling(self.large_window).mean()
 
     def id(self):
         return "volume_id_" + str(self.small_window) + "-" + str(self.large_window)

@@ -18,15 +18,17 @@ class TrendAgent(Agent):
         }
         self.n_outputs = 3
 
-    def get_signal(self, data: pd.DataFrame) -> int:
-        trends = detect_trends(data)
-
-        if not trends["UpTrend"].iloc[-1] and not trends["DownTrend"].iloc[-1]:
+    @staticmethod
+    def get_signal(prepared_data: pd.DataFrame) -> int:
+        if not prepared_data["UpTrend"].iloc[-1] and not prepared_data["DownTrend"].iloc[-1]:
             return 0
-        elif trends["UpTrend"].iloc[-1] and not trends["DownTrend"].iloc[-1]:
+        elif prepared_data["UpTrend"].iloc[-1] and not prepared_data["DownTrend"].iloc[-1]:
             return 1
         else:
             return 2
+
+    def prepare_data(self, data):
+        detect_trends(data)
 
     def id(self):
         return "trend_id"

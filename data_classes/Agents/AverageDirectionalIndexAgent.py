@@ -19,19 +19,23 @@ class ADXAgent(Agent):
         }
         self.n_outputs = 2
 
-    def get_signal(self, data):
-        data["close"] = data["Close"]
-        data["open"] = data["Open"]
-        data["high"] = data["High"]
-        data["low"] = data["Low"]
-        data = data[["low", "close", "high", "open"]]
-
-        data["adx"] = stockstats.StockDataFrame(data)["adx"]
-
-        if data["adx"].iloc[-1] > 25:
+    @staticmethod
+    def get_signal(prepared_data):
+        if prepared_data["adx"].iloc[-1] > 25:
             return 1
         else:
             return 0
+
+    def prepare_data(self, data):
+        data_copy = data.copy()
+
+        data_copy["close"] = data_copy["Close"]
+        data_copy["open"] = data_copy["Open"]
+        data_copy["high"] = data_copy["High"]
+        data_copy["low"] = data_copy["Low"]
+        data_copy = data_copy[["low", "close", "high", "open"]]
+
+        data["adx"] = stockstats.StockDataFrame(data_copy)["adx"]
 
     def id(self):
         return "adx_id"

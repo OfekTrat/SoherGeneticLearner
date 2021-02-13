@@ -24,12 +24,12 @@ VOL_LARGE_WINDOW = 14
 STOCHASTIC_SMALL_WINDOW = 3
 STOCHASTIC_LARGE_WINDOW = 14
 
-NUM_OF_TREES = 100
+NUM_OF_TREES = 150
 N_ITERATIONS = 20
 
-MUTATED_PERCENTAGE = 0.1
-CONVERGED_PERCENTAGE = 0.8
-STAYING_TREES_PERCENTAGE = 0.02
+MUTATED_PERCENTAGE = 0.2
+CONVERGED_PERCENTAGE = 0.6
+STAYING_TREES_PERCENTAGE = 0.03
 
 
 class TreeEnv(object):
@@ -87,7 +87,7 @@ class TreeEnv(object):
                              for tree_id in score.head(int(len(score) * STAYING_TREES_PERCENTAGE))["treeID"]]
                 new_trees = [cls._generate_tree() for i in range(len(generation) - len(converged_trees) \
                                                                  - len(mutations) - len(old_trees))]
-                generation = mutations + converged_trees + new_trees
+                generation = mutations + converged_trees + new_trees + old_trees
                 generation = {i: generation[i] for i in range(len(generation))}
 
         return score, generation

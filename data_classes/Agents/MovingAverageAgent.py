@@ -20,19 +20,20 @@ class MACAgent(Agent):
         }
         self.n_outputs = 3
 
-    def get_signal(self, data: pd.DataFrame) -> int:
-        data_copy = data.copy()
-        data_copy["sma_small"] = data_copy["Close"].rolling(self.small_window).mean()  # SMA - Simple Moving Average
-        data_copy["sma_big"] = data_copy["Close"].rolling(self.big_window).mean()
-
-        if data_copy.iloc[-2]["sma_small"] < data_copy.iloc[-2]["sma_big"] and \
-                data_copy.iloc[-1]["sma_small"] > data_copy.iloc[-1]["sma_big"]:
+    @staticmethod
+    def get_signal(prepared_data: pd.DataFrame) -> int:
+        if prepared_data.iloc[-2]["sma_small"] < prepared_data.iloc[-2]["sma_big"] and \
+                prepared_data.iloc[-1]["sma_small"] > prepared_data.iloc[-1]["sma_big"]:
             return 1
-        elif data_copy.iloc[-2]["sma_small"] > data_copy.iloc[-2]["sma_big"] and \
-                data_copy.iloc[-1]["sma_small"] < data_copy.iloc[-1]["sma_big"]:
+        elif prepared_data.iloc[-2]["sma_small"] > prepared_data.iloc[-2]["sma_big"] and \
+                prepared_data.iloc[-1]["sma_small"] < prepared_data.iloc[-1]["sma_big"]:
             return 2
         else:
             return 0
+
+    def prepare_data(self, data):
+        data["sma_small"] = data["Close"].rolling(self.small_window).mean()
+        data["sma_big"] = data["Close"].rolling(self.big_window).mean()
 
     def id(self):
         return "sma_id_" + str(self.small_window) + "-" + str(self.big_window)

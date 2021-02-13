@@ -52,11 +52,10 @@ def converge_trees(tree1: DTA, tree2: DTA) -> tuple:
     agent_id2 = tree2.agent_id
     overall_agents = _converge_dicts(agent_id2, agent_id1)
 
-
-
     # Coping Trees
     tree1_copy = deepcopy(tree1)
     tree2_copy = deepcopy(tree2)
+
     tree1_copy.agent_id = overall_agents
     tree2_copy.agent_id = overall_agents
 
@@ -68,12 +67,20 @@ def converge_trees(tree1: DTA, tree2: DTA) -> tuple:
     rand_node1 = tree1_copy.get_node(randint(0, count_nodes1 - 1))
     rand_node2 = tree2_copy.get_node(randint(0, count_nodes2 - 1))
 
+    if rand_node1 is tree1_copy.root:
+        tree1_copy.root = rand_node2
+    if rand_node2 is tree2_copy.root:
+        tree2_copy.root = rand_node1
+
     # Changing the parents
     rand_node1.parent, rand_node2.parent = rand_node2.parent, rand_node1.parent
 
     # pruning the trees (removing duplicates)
     tree1_copy.prune_tree()
     tree2_copy.prune_tree()
+
+    tree1_copy.reset_nodes()
+    tree2_copy.reset_nodes()
 
     return tree1_copy, tree2_copy
 
@@ -89,7 +96,7 @@ def rolling_score(score):
 
     score["Chance"] = score["newChance"]
     score = score.drop(columns=["newChance"])
-    return score.sort_values(by="Chance", ascending=False, ignore_index=True)
+    return score.sort_values(by="score", ascending=False, ignore_index=True)
 
 
 def get_tree_id_by_chance(score, chance):

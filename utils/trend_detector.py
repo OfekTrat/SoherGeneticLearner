@@ -2,23 +2,18 @@ import pandas as pd
 import numpy as np
 from statsmodels.tsa.filters.hp_filter import hpfilter
 
-import warnings
-warnings.filterwarnings("ignore")
-
 
 DEV_RANGE = 0.1
 HP_FILTER_CONST = 400
 
 
 def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close") -> pd.DataFrame:
-    data_copy = data.copy()
-    data_copy.reset_index(inplace=True)
+    data.reset_index(inplace=True)
 
-    cycle, trend = hpfilter(data_copy[column_name], HP_FILTER_CONST)
+    cycle, trend = hpfilter(data[column_name], HP_FILTER_CONST)
     function = calc_function(trend)
     deriviatives = get_deriviatives(function)
-    get_trends(data_copy, deriviatives, trend.index, window_size)
-    return data_copy
+    get_trends(data, deriviatives, trend.index, window_size)
 
 
 def calc_function(trend):
@@ -33,8 +28,8 @@ def get_deriviatives(function):
 
 def get_trends(data: pd.DataFrame, deriviatives: np.poly1d, indices, window_size):
     devs = deriviatives(indices)
-    data["UpTrend"] = None
-    data["DownTrend"] = None
+    data["UpTrend"] = 0
+    data["DownTrend"] = 0
 
     count_up_trend = 0
     count_down_trend = 0
@@ -50,14 +45,9 @@ def get_trends(data: pd.DataFrame, deriviatives: np.poly1d, indices, window_size
                 count_down_trend += 1
 
         if count_down_trend == window_size:
-            data["DownTrend"].iloc[i + window_size] = trend_exists
-            trend_exists += 1
+            data.loc[i + window_size, "DownTrend"] = trend_exists
         elif count_up_trend == window_size:
-            data["UpTrend"].iloc[i + window_size] = trend_exists
-            trend_exists += 1
-        else:
-            data["DownTrend"].iloc[i + window_size] = None
-            data["UpTrend"].iloc[i + window_size] = None
+            data.loc[i + window_size, "UpTrend"] = trend_exists
 
         count_up_trend = 0
         count_down_trend = 0
