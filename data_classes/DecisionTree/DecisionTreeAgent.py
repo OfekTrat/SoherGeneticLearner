@@ -1,4 +1,4 @@
-from random import shuffle, choice, randint
+from random import shuffle, choice
 from anytree import Node, RenderTree
 from typing import List
 from ..Agents.Agent import Agent
@@ -10,9 +10,9 @@ OPTIONAL_OUTPUTS = {
 }
 
 
-class DTA(object):
+class DTA(Agent):
     def __init__(self, agents: List[Agent]):
-        shuffle(agents)
+        super().__init__("Decision Tree")
 
         self.agent_id = {agent.id(): agent for agent in agents}
         self._init_nodes()  # Creates only the nodes.
@@ -53,7 +53,7 @@ class DTA(object):
 
         node.children = children
 
-    def run(self, prepared_data):
+    def get_signal(self, prepared_data):
         tmp_node = self.root
         branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
 
