@@ -7,18 +7,17 @@ WINDOW = 30
 N_STOCKS = 10
 
 
-def fitness_agent(agent: Agent, datasets: List[DataFrame], window=WINDOW, n_stocks=N_STOCKS):
+def fitness_agent(agent: Agent, prepared_datasets: List[DataFrame], window=WINDOW, n_stocks=N_STOCKS):
     amount = 0
 
-    for data in datasets:
+    for data in prepared_datasets:
         amount += fitness_single_stock(agent, data, window, n_stocks)
 
     return amount
 
 
-def fitness_single_stock(agent: Agent, data: DataFrame, window=WINDOW, n_stocks=N_STOCKS):
-    data_copy = data.copy()
-    agent.prepare_data(data_copy)
+def fitness_single_stock(agent: Agent, prepared_data: DataFrame, window=WINDOW, n_stocks=N_STOCKS):
+    data_copy = prepared_data.copy()
     amount = 0
     is_invested = False
 

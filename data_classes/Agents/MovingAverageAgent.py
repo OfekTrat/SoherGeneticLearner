@@ -7,6 +7,7 @@ AGENT_TYPE = "MACA"
 
 class MACAgent(Agent):
     TYPE = AGENT_TYPE
+    MUTATED_ATTRS = {"small_window": (1, 10), "big_window": (10, 29)}
 
     def __init__(self, small_window: int, big_window: int):
         super().__init__(AGENT_TYPE)

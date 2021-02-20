@@ -6,6 +6,7 @@ AGENT_TYPE = "Stochastic"
 
 class StochasticAgent(Agent):
     TYPE = AGENT_TYPE
+    MUTATED_ATTRS = {"k_window_size": (10, 20), "d_window_size": (1,7)}
 
     def __init__(self, d_window_size, k_window_size):
         super().__init__(AGENT_TYPE)

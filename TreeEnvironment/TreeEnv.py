@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 from copy import deepcopy
 from random import choice, randint, random
@@ -22,33 +24,30 @@ VOL_LARGE_WINDOW = 14
 STOCHASTIC_SMALL_WINDOW = 3
 STOCHASTIC_LARGE_WINDOW = 14
 
-NUM_OF_TREES = 150
-N_ITERATIONS = 20
-
-MUTATED_PERCENTAGE = 0.2
-CONVERGED_PERCENTAGE = 0.6
-STAYING_TREES_PERCENTAGE = 0.03
+TREE_CHOICES = [0, 1, 2]
 
 
 AGENT_TYPE = [TrendAgent, VolumeAgent, CandleStickAgent, MACAgent, StochasticAgent, ADXAgent]
 
 
-def get_trees_score(generation, data):
-    score = [(tree, fitness_agent(generation[tree], data)) for tree in generation.keys()]
-    return pd.DataFrame(score, columns=["treeID", "score"]).sort_values(by="score", ascending=False)
+def get_trees_scores(generation, prepared_datasets: List[pd.DataFrame]):
+    scores = [(tree, fitness_agent(generation[tree], prepared_datasets)) for tree in generation.keys()]
+    scores = pd.DataFrame(scores, columns=["treeID", "score"]).sort_values(by="score", ascending=False)
+    scores = rolling_chance(scores)
+    return scores
 
 
-def _create_gen():
-    return {i: _generate_random_tree() for i in range(NUM_OF_TREES)}
+def create_gen(n_trees):
+    return {i: generate_random_tree() for i in range(n_trees)}
 
 
-def _generate_random_tree():
+def generate_random_tree():
     n_agents_in_tree = randint(1, len(AGENT_TYPE) - 1)
-    agents = [_generate_random_agent(choice(AGENT_TYPE)) for i in range(n_agents_in_tree)]
+    agents = [generate_random_agent(choice(AGENT_TYPE)) for i in range(n_agents_in_tree)]
     return DTA(agents)
 
 
-def _generate_random_agent(agent):
+def generate_random_agent(agent):
     agent_type = agent.TYPE
 
     if agent_type == "ADX":
@@ -68,8 +67,8 @@ def _generate_random_agent(agent):
         raise
 
 
-def _mutate_gen(generation, score_of_agents):
-    n_trees_to_be_mutated = int(len(generation) * MUTATED_PERCENTAGE)
+def mutate_gen(generation, score_of_agents, mutated_percentage):
+    n_trees_to_be_mutated = int(len(generation) * mutated_percentage)
     mutations = []
 
     for i in range(n_trees_to_be_mutated):
@@ -81,8 +80,8 @@ def _mutate_gen(generation, score_of_agents):
     return mutations
 
 
-def _converged_gen(generation, score_of_agents):
-    n_converged_trees = int(len(generation) * CONVERGED_PERCENTAGE / 2)
+def converged_gen(generation, score_of_agents, converged_percentage):
+    n_converged_trees = int(len(generation) * converged_percentage / 2)
     new_trees = []
 
     for i in range(n_converged_trees):
@@ -99,13 +98,13 @@ def _converged_gen(generation, score_of_agents):
     return new_trees
 
 
-
-
-TREE_CHOICES = [0, 1, 2]
-
-
 def mutate_tree(tree_agent: DTA):
     tree_copy = deepcopy(tree_agent)
+
+    # Choosing to mutate the nodes
+    if randint(0, 1) == 1:
+        mutate_tree_node(tree_copy)
+
     number_of_leaves = tree_copy.count_leaves()
     chosen_leaf = randint(0, number_of_leaves - 1)
 
@@ -127,10 +126,24 @@ def mutate_tree(tree_agent: DTA):
         queue = queue[1:]
         try:
             tmp_node = queue[0]
-        except IndexError as e:
+        except IndexError:
             break
 
     return tree_copy
+
+
+def mutate_tree_node(tree: DTA):
+    rand_node = choice(tree.nodes)
+    random_agent = tree.agent_id[rand_node.name]
+
+    if random_agent.MUTATED_ATTRS:
+        rand_attr_to_change = choice(list(random_agent.MUTATED_ATTRS.keys()))
+        range_of_change = random_agent.MUTATED_ATTRS[rand_attr_to_change]
+        setattr(random_agent, rand_attr_to_change, randint(range_of_change[0], range_of_change[1]))
+        rand_node.name = random_agent.id()
+        tree.agent_id[random_agent.id()] = random_agent
+    else:
+        pass
 
 
 def _converge_dicts(dict1, dict2):
@@ -183,7 +196,7 @@ def converge_trees(tree1: DTA, tree2: DTA) -> tuple:
     return tree1_copy, tree2_copy
 
 
-def rolling_score(score):
+def rolling_chance(score):
     sum_score = (score["score"] - score["score"].min()).sum()
     score["Chance"] = (score["score"] - score["score"].min()) / sum_score
     score = score.sort_values(by="score", ignore_index=True)

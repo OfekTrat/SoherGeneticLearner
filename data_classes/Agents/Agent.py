@@ -7,7 +7,7 @@ class Agent(object):
         print("Expecting an Implementation of child agent")
         raise
 
-    def get_signal(self):
+    def get_signal(self, prepared_data):
         print("Expecting an implementation of child agent")
 
     @classmethod

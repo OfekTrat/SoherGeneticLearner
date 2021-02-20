@@ -29,6 +29,7 @@ AGENT_TYPE = "CandleStick"
 
 class CandleStickAgent(Agent):
     TYPE = AGENT_TYPE
+    MUTATED_ATTRS = {}
 
     def __init__(self):
         super().__init__(AGENT_TYPE)
