@@ -1,8 +1,9 @@
 import pandas as pd
 import yfinance as yf
-from data_classes.Agents.MassIndexAgent import MIAgent
+from data_classes.Agents.TRIXAgent import TRIXAgent
 import ta.volume as volume
 import matplotlib.pyplot as plt
+
 
 def main():
     # stock_list = get_stock_list(n_stocks=2)
@@ -18,13 +19,14 @@ def main():
     #
     # best_tree = te.generation[scores.head(1)["treeID"].item()]
     # print(best_tree)
-    tick = yf.Ticker("AAPL")
+    tick = yf.Ticker("FB")
     data = tick.history("1Y")
 
-    agent = MIAgent()
+    agent = TRIXAgent()
     agent.prepare_data(data)
-    plt.plot(data[agent.id()].values)
+    plt.plot(data["trix_15"].values)
     plt.show()
+
 
 
 
