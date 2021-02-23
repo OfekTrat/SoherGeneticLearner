@@ -109,25 +109,15 @@ def mutate_tree(tree_agent: DTA):
     chosen_leaf = randint(0, number_of_leaves - 1)
 
     count = 0
-    queue = []
-    continue_iter = True
-    tmp_node = tree_copy.root
 
-    while continue_iter:
-        for child in tmp_node.children:
-            if type(child.name) == str:  # Checks if the child is a node or an end branch
-                queue.append(child)
-            else:
+    for node in tree_copy.iter_tree():
+        for child in node.children:
+            if type(child.name) == int:
                 if count == chosen_leaf:
                     child.name = choice(TREE_CHOICES)
-                    continue_iter = False
-                count += 1
+                    break
 
-        queue = queue[1:]
-        try:
-            tmp_node = queue[0]
-        except IndexError:
-            break
+                count += 1
 
     return tree_copy
 

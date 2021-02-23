@@ -57,16 +57,9 @@ class DTA(Agent):
         tmp_node = self.root
         branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
 
-        try:
-            while type(tmp_node.children[branch].name) == str:
-                tmp_node = tmp_node.children[branch]
-                branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
-        except Exception as e:
-            print(self.is_valid())
-            print(tmp_node, tmp_node.children, branch)
-            print(self)
-            print(prepared_data.columns)
-            raise e
+        while type(tmp_node.children[branch].name) == str:
+            tmp_node = tmp_node.children[branch]
+            branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
 
         return tmp_node.children[branch].name
 
@@ -78,46 +71,30 @@ class DTA(Agent):
         return RenderTree(self.root)
 
     def count_leaves(self):
-        queue_nodes = []
-        next_node = self.root
-        queue_nodes.append(next_node)
         count = 0
 
-        while True:
-            for child in next_node.children:
-                if type(child.name) == str:  # Checks if the child is a node or an end branch
-                    queue_nodes.append(child)
-                else:
+        for node in self.iter_tree():
+            for child in node.children:
+                if type(child.name) == int:
                     count += 1
 
-            queue_nodes = queue_nodes[1:]
-            try:
-                next_node = queue_nodes[0]
-            except IndexError as e:
-                return count
+        return count
 
     def count_nodes(self):
-        return len(self.nodes)
+        count = 0
+
+        for node in self.iter_tree():
+            count += 1
+
+        return count
 
     def get_node(self, index):
         return self.nodes[index]
 
     def prune_tree(self):
-        # Creating queue for pruning nodes
-        next_node = self.root
-        queue = [next_node]
-
-        while True:
-            for branch_value, child in enumerate(next_node.children):
-                if type(child.name) == str:
-                    self._prune_node(child, next_node.name, branch_value)
-                    queue.append(child)
-
-            queue = queue[1:]
-            try:
-                next_node = queue[0]
-            except IndexError as e:
-                break
+        for node in self.iter_tree():
+            for branch, child in enumerate(node.children):
+                self._prune_node(child, node.name, branch)
 
     def _prune_node(self, node, node_id, branch_value):
         current_id = node.name
@@ -135,41 +112,30 @@ class DTA(Agent):
             parent_node.children = parents_children
 
     def is_valid(self):
-        next_node = self.root
-        queue = [next_node]
-
-        while True:
-            if type(next_node.name) == str:
-                if self.agent_id[next_node.name].n_outputs != len(next_node.children):
-                    return False
-                else:
-                    for child in next_node.children:
-                        if type(child.name) == str:
-                            queue.append(child)
-
-            queue = queue[1:]
-
-            try:
-                next_node = queue[0]
-            except IndexError as e:
-                break
+        for node in self.iter_tree():
+            if self.agent_id[node.name].n_outputs != len(node.children):
+                return False
 
         return True
 
     def reset_nodes(self):
         self.nodes = []
+
+        for node in self.iter_tree():
+            self.nodes.append(node)
+
+    def iter_tree(self):
         next_node = self.root
         queue = [next_node]
 
         while True:
-            if type(next_node.name) == str:
-                self.nodes.append(next_node)
-
             for child in next_node.children:
                 if type(child.name) == str:
                     queue.append(child)
 
             queue = queue[1:]
+            yield next_node
+
             try:
                 next_node = queue[0]
             except IndexError as e:

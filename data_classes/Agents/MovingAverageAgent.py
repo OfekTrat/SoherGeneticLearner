@@ -1,40 +1,29 @@
 import pandas as pd
 from .Agent import Agent
+import ta.trend as trend
 
 
 AGENT_TYPE = "MACA"
 
 
 class MACAgent(Agent):
-    TYPE = AGENT_TYPE
-    MUTATED_ATTRS = {"small_window": (1, 10), "big_window": (10, 29)}
+    def __init__(self, slow_window=26, fast_window=12):
+        self.slow_window = slow_window
+        self.fast_window = fast_window
 
-    def __init__(self, small_window: int, big_window: int):
-        super().__init__(AGENT_TYPE)
-        self.big_window = big_window
-        self.small_window = small_window
+        self.column_name = f"macd_{slow_window}_{fast_window}"
 
-        self.mapper = {
-            1: "BUY",
-            2: "SELL",
-            0: "NOTHING"
-        }
-        self.n_outputs = 3
+        self.n_outputs = 2
 
-    @staticmethod
-    def get_signal(prepared_data: pd.DataFrame) -> int:
-        if prepared_data.iloc[-2]["sma_small"] < prepared_data.iloc[-2]["sma_big"] and \
-                prepared_data.iloc[-1]["sma_small"] > prepared_data.iloc[-1]["sma_big"]:
-            return 1
-        elif prepared_data.iloc[-2]["sma_small"] > prepared_data.iloc[-2]["sma_big"] and \
-                prepared_data.iloc[-1]["sma_small"] < prepared_data.iloc[-1]["sma_big"]:
-            return 2
+    def get_signal(self, prepared_data: pd.DataFrame) -> int:
+        if prepared_data[self.column_name].iloc[-1] > 0:
+            return 1  # BULL
         else:
-            return 0
+            return 0  # BEAR
 
     def prepare_data(self, data):
-        data["sma_small"] = data["Close"].rolling(self.small_window).mean()
-        data["sma_big"] = data["Close"].rolling(self.big_window).mean()
+        macd = trend.MACD(data["Close"], self.slow_window, self.fast_window)
+        data[self.column_name] = macd.macd_diff()
 
     def id(self):
-        return "sma_id_" + str(self.small_window) + "-" + str(self.big_window)
+        return self.column_name

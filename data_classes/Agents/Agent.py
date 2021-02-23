@@ -1,7 +1,7 @@
 
 class Agent(object):
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, agent_type):
+        self.type = agent_type
 
     def prepare_data(self, data):
         print("Expecting an Implementation of child agent")
@@ -9,19 +9,8 @@ class Agent(object):
 
     def get_signal(self, prepared_data):
         print("Expecting an implementation of child agent")
+        raise
 
-    @classmethod
-    def get_types(cls):
-        types = {
-            "require_input": [  # Requires small window and then large window
-                "Volume",
-                "MACA",
-                "Stochastic"
-            ],
-            "simple": [  # Does not require any input
-                "ADX",
-                "CandleStick",
-                "Trend"
-            ]
-        }
-
+    def id(self):
+        print("Expecting and implementation of child agent")
+        raise
