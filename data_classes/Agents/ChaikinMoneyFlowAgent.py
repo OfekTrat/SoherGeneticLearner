@@ -12,12 +12,10 @@ class CHFAgent(Agent):
         data[self.column_name] = chf.chaikin_money_flow()
 
     def get_signal(self, prepared_data):
-        if prepared_data[self.column_name].iloc[-2] < 0 < prepared_data[self.column_name].iloc[-1]:
+        if prepared_data[self.column_name].iloc[-1] > 0:
             return 1  # BUY
-        elif prepared_data[self.column_name].iloc[-2] > 0 > prepared_data[self.column_name].iloc[-1]:
-            return 2  # SELL
         else:
-            return 0
+            return 0  # SELL
 
     def id(self):
         return self.column_name

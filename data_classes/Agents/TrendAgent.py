@@ -3,20 +3,8 @@ from .Agent import Agent
 from utils.trend_detector import detect_trends
 
 
-AGENT_TYPE = "Trend"
-
-
 class TrendAgent(Agent):
-    TYPE = AGENT_TYPE
-    MUTATED_ATTRS = {}
-
     def __init__(self):
-        super().__init__(AGENT_TYPE)
-        self.mapper = {
-            0: "NOTREND",
-            1: "UPTREND",
-            2: "DOWNTREND"
-        }
         self.n_outputs = 3
 
     @staticmethod

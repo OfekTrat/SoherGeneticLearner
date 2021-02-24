@@ -28,16 +28,7 @@ AGENT_TYPE = "CandleStick"
 
 
 class CandleStickAgent(Agent):
-    TYPE = AGENT_TYPE
-    MUTATED_ATTRS = {}
-
     def __init__(self):
-        super().__init__(AGENT_TYPE)
-        self.signals = {
-            0: "NOTHING",
-            1: "BULLISH",
-            2: "BEARISH"
-        }
         self.n_outputs = 3
 
     @staticmethod

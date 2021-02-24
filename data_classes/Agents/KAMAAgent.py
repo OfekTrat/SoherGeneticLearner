@@ -22,7 +22,7 @@ class KAMAAgent(Agent):
                 prepared_data[self.column_name].iloc[-1 * self.window] > TREND_DIFF:
             return 1  # TREND UP
         elif prepared_data[self.column_name].iloc[-1] - \
-                prepared_data[self.column_name].iloc[-1 * self.window] < -1 *TREND_DIFF:
+                prepared_data[self.column_name].iloc[-1 * self.window] < -1 * TREND_DIFF:
             return 2  # TREND DOWN
         else:
             return 0

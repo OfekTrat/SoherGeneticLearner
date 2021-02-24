@@ -17,11 +17,9 @@ class PVOAgent(Agent):
 
     def get_signal(self, prepared_data):
         if prepared_data[self.column_name].iloc[-1] > 0:
-            return 1  # ABOVE AVERAGE
-        elif prepared_data[self.column_name].iloc[-1] < 0:
-            return 2  # BELOW AVERAGE
+            return 1
         else:
-            return 0  # AVERAGE
+            return 0
 
     def id(self):
         return self.column_name

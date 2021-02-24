@@ -1,6 +1,6 @@
 import pandas as pd
 import yfinance as yf
-from data_classes.Agents.TRIXAgent import TRIXAgent
+from data_classes.Agents.MovingAverageAgent import MACAgent
 import ta.volume as volume
 import matplotlib.pyplot as plt
 
@@ -22,24 +22,18 @@ def main():
     tick = yf.Ticker("FB")
     data = tick.history("1Y")
 
-    agent = TRIXAgent()
-    agent.prepare_data(data)
-    plt.plot(data["trix_15"].values)
-    plt.show()
+    agent = MACAgent()
+    # print(agent._get_int_attrs())
 
 
+# todo 1. validate attributes: n_outputs, column_name
+# todo 2. validate methods: id(), prepare_date(pd.DataFrame), get_signal(prepared_data)
+# todo 3. validate inheritance: make sure super().__init__() is called
 
+# todo Change __init__.py of Agents so that I can import all agents once.
 
+# todo Find tree implementation of json   --- probably anytree is good enough for that.
 
-# todo STOPPED AT: Trend Indicators
-
-# todo think about changing buying signals to trend signals (do not tell when to buy or sell but when a tred is up or
-#  down)
-
-# todo READ ALL THE FUNCTIONALITIES OF ta MODULE AND IMPLEMNT AGENTS OF THEM - USE THE TA DOCUMENTATION AND
-#  INVESTOPEDIA FOR UNDERSTAING THE INDICATORS
-# todo validate new Agents that they have all of the attributes needed, default attribues, parameters matching documentation
-# todo change most agents to use ta module
 # todo smarter fitness function
 #       1. start with a certain amount
 #       2. Buy as much as you can with the money

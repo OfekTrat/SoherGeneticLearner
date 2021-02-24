@@ -14,18 +14,18 @@ class ADXAgent(Agent):
 
     def __init__(self):
         super().__init__(AGENT_TYPE)
-        self.signals = {
-            0: "WeakTrend",
-            1: "StrongTrend"
-        }
-        self.n_outputs = 2
+        self.n_outputs = 4
 
     @staticmethod
     def get_signal(prepared_data):
-        if prepared_data["adx"].iloc[-1] > 25:
-            return 1
-        else:
+        if 0 < prepared_data["adx"].iloc[-1] < 25:
             return 0
+        elif 25 < prepared_data["adx"].iloc[-1] < 50:
+            return 1
+        elif 50 < prepared_data["adx"].iloc[-1] < 75:
+            return 2
+        else:
+            return 3
 
     def prepare_data(self, data):
         adx_ind = trend.ADXIndicator(data["High"], data["Low"], data["Close"])

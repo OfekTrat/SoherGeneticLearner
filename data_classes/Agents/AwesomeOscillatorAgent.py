@@ -19,10 +19,8 @@ class AwesomeOscillatorAgent(Agent):
         data[self.column_name] = ao.awesome_oscillator()
 
     def get_signal(self, prepared_data: pd.DataFrame):
-        if prepared_data[self.column_name].iloc[-1] > 0 > prepared_data[self.column_name].iloc[-2]:
+        if prepared_data[self.column_name].iloc[-1] > 0:
             return 1  # BUY
-        elif prepared_data[self.column_name].iloc[-1] < 0 < prepared_data[self.column_name].iloc[-2]:
-            return 2  # SELL
         else:
             return 0
 

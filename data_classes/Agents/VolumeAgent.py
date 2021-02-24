@@ -6,18 +6,11 @@ AGENT_TYPE = "Volume"
 
 
 class VolumeAgent(Agent):
-    TYPE = AGENT_TYPE
-    MUTATED_ATTRS = {"small_window": (1, 10), "large_window": (10, 29)}
-
     def __init__(self, small_window: int, large_window: int):
-        super().__init__(AGENT_TYPE)
         self.small_window = small_window
         self.large_window = large_window
 
-        self.mapper = {
-            1: "STRONG",
-            0: "WEAK"
-        }
+        self.column_name = f"volume2_{small_window}_{large_window}"
         self.n_outputs = 2
 
     @staticmethod
@@ -28,9 +21,9 @@ class VolumeAgent(Agent):
             return 0
 
     def prepare_data(self, data):
-        data["sma_vol_small"] = data["Volume"].rolling(self.small_window).mean()
-        data["sma_vol_large"] = data["Volume"].rolling(self.large_window).mean()
+        data[self.column_name] = data["Volume"].rolling(self.small_window).mean() - \
+                                 data["Volume"].rolling(self.large_window).mean()
 
     def id(self):
-        return "volume_id_" + str(self.small_window) + "-" + str(self.large_window)
+        return self.column_name
 
