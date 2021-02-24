@@ -1,8 +1,6 @@
 import pandas as pd
 import yfinance as yf
-from data_classes.Agents.MovingAverageAgent import MACAgent
-import ta.volume as volume
-import matplotlib.pyplot as plt
+import data_classes.Agents as Agents
 
 
 def main():
@@ -22,7 +20,7 @@ def main():
     tick = yf.Ticker("FB")
     data = tick.history("1Y")
 
-    agent = MACAgent()
+    agent = Agents.MACAgent()
     # print(agent._get_int_attrs())
 
 
@@ -30,9 +28,7 @@ def main():
 # todo 2. validate methods: id(), prepare_date(pd.DataFrame), get_signal(prepared_data)
 # todo 3. validate inheritance: make sure super().__init__() is called
 
-# todo Change __init__.py of Agents so that I can import all agents once.
-
-# todo Find tree implementation of json   --- probably anytree is good enough for that.
+# todo Find tree implementation of json --- probably anytree is good enough for that.
 
 # todo smarter fitness function
 #       1. start with a certain amount
