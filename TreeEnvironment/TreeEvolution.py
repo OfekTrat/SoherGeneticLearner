@@ -33,14 +33,14 @@ class TreeEvolution(object):
             for func_id in prepare_data_functions.keys():
                 prepare_data_functions[func_id](dataset)
 
-    def evolve(self, datasets: List[pd.DataFrame], n_iterations, print_best=False) -> pd.DataFrame:
+    def evolve(self, fitness_func, datasets: List[pd.DataFrame], n_iterations, print_best=False) -> pd.DataFrame:
         scores = None
 
         for i in range(n_iterations):
             # Every iteration because the analyzing of the data changes overtime
             data_copy = deepcopy(datasets)
             self.prepare_data(data_copy)
-            scores = TreeEnv.get_trees_scores(self.generation, data_copy)
+            scores = TreeEnv.get_trees_scores(fitness_func, self.generation, data_copy)
 
             if print_best:
                 print("Best Tree Amount:", scores.head(1)["score"].item(),

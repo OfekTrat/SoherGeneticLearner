@@ -25,8 +25,8 @@ AGENT_TYPES = [getattr(Agents, attribute) for attribute in dir(Agents) if not at
                and attribute.endswith("Agent") and attribute != 'Agent']
 
 
-def get_trees_scores(generation, prepared_datasets: List[pd.DataFrame]):
-    scores = [(tree, fitness_agent(generation[tree], prepared_datasets)) for tree in generation.keys()]
+def get_trees_scores(fitness_func, generation, prepared_datasets: List[pd.DataFrame]):
+    scores = [(tree, fitness_agent(fitness_func, generation[tree], prepared_datasets)) for tree in generation.keys()]
     scores = pd.DataFrame(scores, columns=["treeID", "score"]).sort_values(by="score", ascending=False)
     scores = rolling_chance(scores)
     return scores

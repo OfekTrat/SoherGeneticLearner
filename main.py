@@ -2,7 +2,7 @@ import pandas as pd
 import yfinance as yf
 import data_classes.Agents as Agents
 from TreeEnvironment import TreeEnv
-from utils.fitness import fitness_agent
+from utils.fitness import simple_fitness, exponential_fitness, fitness_agent
 from TreeEnvironment.TreeEvolution import TreeEvolution
 from TreeEnvironment.TreeEnv import generate_random_tree
 
@@ -17,20 +17,21 @@ def main():
     # agent = Agents.MACAgent()
     # agent.prepare_data(data1)
     # agent.prepare_data(data2)
-    # print(fitness_agent(agent, [data1, data2]))
+    # print(fitness_agent(exponential_fitness, agent, [data1, data1]))
+    # print(fitness_agent(simple_fitness, agent, [data1, data2]))
 
-    random_tree = generate_random_tree()
-    random_tree.prepare_data(data1)
-    random_tree.prepare_data(data2)
-    print(fitness_agent(random_tree, [data1, data2]))
+    # random_tree = generate_random_tree()
+    # random_tree.prepare_data(data1)
+    # random_tree.prepare_data(data2)
+    # print(fitness_agent(exponential_fitness, random_tree, [data1, data2]))
+    # print(fitness_agent(simple_fitness, random_tree, [data1, data2]))
+
+    te = TreeEvolution()
+    score = te.evolve(exponential_fitness, [data1, data2], 3, print_best=True)
 
 
-
-# todo Make converge and mutate functions not random (In the implementation of evolving, enter random values).
-
-# todo Smarter fitness function
-#       1. start with a certain amount
-#       2. Buy as much as you can with the money
+# todo Create a class for transaction to make it for statistical analysis
+# todo Create mutate option for attribute mutation.
 
 
 if __name__ == '__main__':
