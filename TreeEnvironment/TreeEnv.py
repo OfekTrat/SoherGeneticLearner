@@ -5,12 +5,7 @@ from copy import deepcopy
 from random import choice, randint, random
 
 # Agent importing
-from data_classes.Agents.TrendAgent import TrendAgent
-from data_classes.Agents.VolumeAgent import VolumeAgent
-from data_classes.Agents.CandleStickAgent import CandleStickAgent
-from data_classes.Agents.MovingAverageAgent import MACAgent
-from data_classes.Agents.StochasticAgent import StochasticAgent
-from data_classes.Agents.AverageDirectionalIndexAgent import ADXAgent
+import data_classes.Agents as Agents
 
 # Tree Importing
 from data_classes.DecisionTree.DecisionTreeAgent import DTA
@@ -26,8 +21,8 @@ STOCHASTIC_LARGE_WINDOW = 14
 
 TREE_CHOICES = [0, 1, 2]
 
-
-AGENT_TYPE = [TrendAgent, VolumeAgent, CandleStickAgent, MACAgent, StochasticAgent, ADXAgent]
+AGENT_TYPES = [getattr(Agents, attribute) for attribute in dir(Agents) if not attribute.startswith("__")
+               and attribute.endswith("Agent") and attribute != 'Agent']
 
 
 def get_trees_scores(generation, prepared_datasets: List[pd.DataFrame]):
@@ -42,29 +37,13 @@ def create_gen(n_trees):
 
 
 def generate_random_tree():
-    n_agents_in_tree = randint(1, len(AGENT_TYPE) - 1)
-    agents = [generate_random_agent(choice(AGENT_TYPE)) for i in range(n_agents_in_tree)]
+    n_agents_in_tree = randint(1, len(AGENT_TYPES) - 1)
+    agents = [generate_random_agent(choice(AGENT_TYPES)) for i in range(n_agents_in_tree)]
     return DTA(agents)
 
 
 def generate_random_agent(agent):
-    agent_type = agent.TYPE
-
-    if agent_type == "ADX":
-        return agent()
-    elif agent_type == "CandleStick":
-        return agent()
-    elif agent_type == "MACA":
-        return agent(MAC_SMALL_WINDOW, MAC_LARGE_WINDOW)
-    elif agent_type == "Stochastic":
-        return agent(STOCHASTIC_SMALL_WINDOW, STOCHASTIC_LARGE_WINDOW)
-    elif agent_type == "Trend":
-        return agent()
-    elif agent_type == "Volume":
-        return agent(VOL_SMALL_WINDOW, VOL_LARGE_WINDOW)
-    else:
-        print("Cannot find agent")
-        raise
+    return agent()
 
 
 def mutate_gen(generation, score_of_agents, mutated_percentage):
@@ -102,8 +81,8 @@ def mutate_tree(tree_agent: DTA):
     tree_copy = deepcopy(tree_agent)
 
     # Choosing to mutate the nodes
-    if randint(0, 1) == 1:
-        mutate_tree_node(tree_copy)
+    # if randint(0, 1) == 1:
+    #     mutate_tree_node(tree_copy)
 
     number_of_leaves = tree_copy.count_leaves()
     chosen_leaf = randint(0, number_of_leaves - 1)

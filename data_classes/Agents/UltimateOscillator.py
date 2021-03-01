@@ -4,11 +4,13 @@ import ta.momentum as momentum
 
 class UltimateOscillatorAgent(Agent):
     def __init__(self, window1=7, window2=14, window3=28):
+        super().__init__()
         self.window1 = window1
         self.window2 = window2
         self.window3 = window3
 
         self.column_name = f"ultimate_{window1}_{window2}_{window3}"
+        self.n_outputs = 3
 
     def prepare_data(self, data):
         uo = momentum.UltimateOscillator(

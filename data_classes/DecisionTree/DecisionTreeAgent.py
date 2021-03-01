@@ -12,12 +12,13 @@ OPTIONAL_OUTPUTS = {
 
 class DTA(Agent):
     def __init__(self, agents: List[Agent]):
-        super().__init__("Decision Tree")
+        super().__init__()
 
         self.agent_id = {agent.id(): agent for agent in agents}
         self._init_nodes()  # Creates only the nodes.
         self.root = self.nodes[0]
         self._create_tree()
+        self.n_outputs = 3
 
     def __repr__(self):
         print(RenderTree(self.root))
@@ -56,10 +57,14 @@ class DTA(Agent):
     def get_signal(self, prepared_data):
         tmp_node = self.root
         branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
+        try:
+            while type(tmp_node.children[branch].name) == str:
+                tmp_node = tmp_node.children[branch]
+                branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
+        except Exception as e:
+            print(branch)
+            raise e
 
-        while type(tmp_node.children[branch].name) == str:
-            tmp_node = tmp_node.children[branch]
-            branch = self.agent_id[tmp_node.name].get_signal(prepared_data)
 
         return tmp_node.children[branch].name
 
