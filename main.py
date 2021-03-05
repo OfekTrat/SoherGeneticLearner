@@ -1,3 +1,5 @@
+import pickle
+
 import pandas as pd
 import yfinance as yf
 import data_classes.Agents as Agents
@@ -14,23 +16,23 @@ def main():
     tick2 = yf.Ticker("AAPL")
     data2 = tick2.history("1Y")
 
-    # agent = Agents.MACAgent()
-    # agent.prepare_data(data1)
-    # agent.prepare_data(data2)
-    # print(fitness_agent(exponential_fitness, agent, [data1, data1]))
-    # print(fitness_agent(simple_fitness, agent, [data1, data2]))
+    tick3 = yf.Ticker("TGT")
+    data3 = tick3.history("1Y")
 
-    # random_tree = generate_random_tree()
-    # random_tree.prepare_data(data1)
-    # random_tree.prepare_data(data2)
-    # print(fitness_agent(exponential_fitness, random_tree, [data1, data2]))
-    # print(fitness_agent(simple_fitness, random_tree, [data1, data2]))
+    datasets = [data1, data2, data3]
 
     te = TreeEvolution()
-    score = te.evolve(exponential_fitness, [data1, data2], 3, print_best=True)
+    te.prepare_data(datasets)
+    scores = TreeEnv.get_trees_scores(exponential_fitness, te.generation, datasets)
+    print(scores.iloc[0].score)
+    best_tree_id = scores.iloc[0].treeID.astype(int)
+    best_tree = te.generation[best_tree_id]
+
+    with open("best_tree", 'wb') as f:
+        pickle.dump(best_tree, f)
 
 
-# todo Create a class for transaction to make it for statistical analysis
+# todo Create a class for transaction to make it for statistical analysis, logs
 # todo Create mutate option for attribute mutation.
 
 

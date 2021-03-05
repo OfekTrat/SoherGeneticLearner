@@ -62,11 +62,8 @@ def exponential_fitness(agent, prepared_data, window=WINDOW, n_stocks=N_STOCKS):
 
         if signal == "BUY" and not is_invested:
             current_stock_amount = data_slice.iloc[-1]["Close"]
-
-            while amount > current_stock_amount:
-                amount -= current_stock_amount
-                n_stocks += 1
-
+            n_stocks = int(amount / current_stock_amount)
+            amount -= current_stock_amount * n_stocks
             is_invested = True
         elif signal == "SELL" and is_invested:
             current_stock_amount = data_slice.iloc[-1]["Close"]
