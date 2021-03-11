@@ -15,11 +15,11 @@ class ADXAgent(Agent):
         self.column_name = "adx"
 
     def get_signal(self, prepared_data):
-        if 0 < prepared_data[self.column_name].iloc[-1] < 25:
+        if 0 < prepared_data[self.column_name].iloc[-1] <= 25:
             return 0
-        elif 25 < prepared_data[self.column_name].iloc[-1] < 50:
+        elif 25 < prepared_data[self.column_name].iloc[-1] <= 50:
             return 1
-        elif 50 < prepared_data[self.column_name].iloc[-1] < 75:
+        elif 50 < prepared_data[self.column_name].iloc[-1] <= 75:
             return 2
         else:
             return 3
