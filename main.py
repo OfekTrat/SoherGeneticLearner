@@ -3,6 +3,9 @@ import yfinance as yf
 from TreeEnvironment import TreeEnv
 from utils.fitness import exponential_fitness
 from TreeEnvironment.TreeEvolution import TreeEvolution
+from data_classes.DecisionTree import DecisionTreeAgent
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -17,19 +20,30 @@ def main():
 
     datasets = [data1, data2, data3]
 
-    te = TreeEvolution()
+    tick4 = yf.Ticker("PM")
+    data4 = tick4.history("2Y")
 
-    te.prepare_data(datasets)
-    scores = TreeEnv.get_trees_scores(exponential_fitness, te.generation, datasets)
-    print(scores.iloc[0].score)
-    best_tree_id = scores.iloc[0].treeID.astype(int)
-    best_tree = te.generation[best_tree_id]
+    with open("best_tree", "rb") as f:
+        agent = pickle.load(f)
 
-    with open("best_tree", 'wb') as f:
-        pickle.dump(best_tree, f)
+    agent.prepare_data(data4)
+    amount = exponential_fitness(agent, data4)
+
+    print(amount)
+
+    # te = TreeEvolution()
+    #
+    # te.prepare_data(datasets)
+    # scores = te.evolve(exponential_fitness, datasets, n_iterations=1, print_best=True)
+    # best_tree_id = scores.iloc[0].treeID.astype(int)
+    # print(f"Best Score:{scores.iloc[0].score}, Best Tree ID: {best_tree_id}")
+    # print(f"Worst Score: {scores.iloc[-1].score}")
+    # best_tree = te.generation[best_tree_id]
+
+    # with open("best_tree", 'wb') as f:
+    #     pickle.dump(best_tree, f)
 
 
-# todo Create a class for transaction to make it for statistical analysis, logs
 # todo Create mutate option for attribute mutation.
 
 
