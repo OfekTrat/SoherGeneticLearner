@@ -1,5 +1,5 @@
 import configparser
-from typing import List
+from typing import List, Dict
 from copy import deepcopy
 
 import TreeEnvironment.TreeEnv as TreeEnv
@@ -21,7 +21,7 @@ class TreeEvolution(object):
 
         self.generation = TreeEnv.create_gen(self.n_trees)
 
-    def prepare_data(self, data: List[pd.DataFrame]):
+    def prepare_data(self, data: Dict[str, pd.DataFrame]):
         prepare_data_functions = {}
 
         for tree_id in self.generation.keys():
@@ -29,18 +29,17 @@ class TreeEvolution(object):
                 if agent_id not in prepare_data_functions:
                     prepare_data_functions[agent_id] = self.generation[tree_id].agent_id[agent_id].prepare_data
 
-        for dataset in data:
+        for symbol, dataset in data.items():
             for func_id in prepare_data_functions.keys():
                 prepare_data_functions[func_id](dataset)
 
-    def evolve(self, fitness_func, datasets: List[pd.DataFrame], n_iterations, print_best=False) -> pd.DataFrame:
+    def evolve(self, fitness_func, prepared_datasets: Dict[str, pd.DataFrame], n_iterations, print_best=False,
+               log_transactions=False) -> pd.DataFrame:
         scores = None
 
         for i in range(n_iterations):
             # Every iteration because the analyzing of the data changes overtime
-            data_copy = deepcopy(datasets)
-            self.prepare_data(data_copy)
-            scores = TreeEnv.get_trees_scores(fitness_func, self.generation, data_copy)
+            scores = TreeEnv.get_trees_scores(fitness_func, self.generation, prepared_datasets, log_transactions)
 
             if print_best:
                 print("Best Tree Amount:", scores.head(1)["score"].item(),

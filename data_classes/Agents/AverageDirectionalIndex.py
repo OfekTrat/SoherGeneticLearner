@@ -28,5 +28,7 @@ class ADXAgent(Agent):
         adx_ind = trend.ADXIndicator(data["High"], data["Low"], data["Close"])
         data[self.column_name] = adx_ind.adx()
 
+
+
     def id(self):
         return self.column_name

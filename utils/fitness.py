@@ -1,23 +1,27 @@
 import pandas as pd
-from typing import List
+from typing import List, Dict
 from pandas import DataFrame
 from data_classes.Agents.Agent import Agent
+from datetime import datetime
 
 
 WINDOW = 30
 N_STOCKS = 10
+LOG_FOLDER = "logs\\"
 
 
-def fitness_agent(fitness_func, agent: Agent, prepared_datasets: List[DataFrame], window=WINDOW, n_stocks=N_STOCKS):
+def fitness_agent(fitness_func, agent: Agent, prepared_datasets: Dict[str, DataFrame], tree_id: int, window=WINDOW,
+                  n_stocks=N_STOCKS, log_transactions=False):
     amount = 0
 
-    for data in prepared_datasets:
-        amount += fitness_func(agent, data, window, n_stocks)
+    for symbol, data in prepared_datasets.items():
+        amount += fitness_func(agent, symbol, data, tree_id, window, n_stocks, log_transactions=log_transactions)
 
     return amount
 
 
-def simple_fitness(agent: Agent, prepared_data: DataFrame, window=WINDOW, n_stocks=N_STOCKS):
+def simple_fitness(agent: Agent, symbol: str, prepared_data: DataFrame, tree_id, window=WINDOW, n_stocks=N_STOCKS,
+                   log_transactions=False):
     amount = 0
     is_invested = False
 
@@ -45,7 +49,8 @@ def simple_fitness(agent: Agent, prepared_data: DataFrame, window=WINDOW, n_stoc
     return amount
 
 
-def exponential_fitness(agent, prepared_data: pd.DataFrame, window=WINDOW, n_stocks=N_STOCKS):
+def exponential_fitness(agent: Agent, symbol: str, prepared_data: pd.DataFrame, tree_id: int = 0, window=WINDOW, n_stocks=N_STOCKS,
+                        log_transactions=False):
 
     first_amount = amount = 1000
     is_invested = False
@@ -57,34 +62,36 @@ def exponential_fitness(agent, prepared_data: pd.DataFrame, window=WINDOW, n_sto
 
     n_stocks = 0
 
-    # points_of_transactions = []
+    points_of_transactions = []
 
     for i in range(window, len(prepared_data)):
         data_slice = prepared_data.iloc[i - window:i].copy()
         signal = signal_mapper[agent.get_signal(data_slice)]
 
         if signal == "BUY" and not is_invested:
-            print("BUY", data_slice.iloc[-1].Date, data_slice.iloc[-1].Close)
-            # points_of_transactions.append(
-            #     (
-            #         "BUY",
-            #         data_slice.iloc[-1].Date,
-            #         data_slice.iloc[-1].Close
-            #     )
-            # )
+            points_of_transactions.append(
+                (
+                    tree_id,
+                    symbol,
+                    "BUY",
+                    data_slice.iloc[-1].Date,
+                    data_slice.iloc[-1].Close
+                )
+            )
             current_stock_amount = data_slice.iloc[-1]["Close"]
             n_stocks = int(amount / current_stock_amount)
             amount -= current_stock_amount * n_stocks
             is_invested = True
         elif signal == "SELL" and is_invested:
-            print("SELL", data_slice.iloc[-1].Date, data_slice.iloc[-1].Close)
-            # points_of_transactions.append(
-            #     (
-            #         "SELL",
-            #         data_slice.iloc[-1].Date,
-            #         data_slice.iloc[-1].Close
-            #     )
-            # )
+            points_of_transactions.append(
+                (
+                    tree_id,
+                    symbol,
+                    "SELL",
+                    data_slice.iloc[-1].Date,
+                    data_slice.iloc[-1].Close
+                )
+            )
             current_stock_amount = data_slice.iloc[-1]["Close"]
             amount += current_stock_amount * n_stocks
             n_stocks = 0
@@ -95,7 +102,18 @@ def exponential_fitness(agent, prepared_data: pd.DataFrame, window=WINDOW, n_sto
     if is_invested:
         amount += prepared_data.iloc[-1]["Close"] * n_stocks
 
-    return amount - first_amount  #, points_of_transactions
+    if log_transactions:
+        text = "TreeID,Symbol,Signal,Date,ClosePrice\n"
+        text += "\n".join(
+            [f"{tree_ident},{symbol},{signal},{date},{close}"
+             for tree_ident, symbol, signal, date, close in points_of_transactions]
+        )
+        file_name = LOG_FOLDER + f"{symbol}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{tree_id}.csv"
+
+        with open(file_name, "w") as f:
+            f.write(text)
+
+    return amount - first_amount
 
 
 

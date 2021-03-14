@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import pandas as pd
 from copy import deepcopy
@@ -25,8 +25,9 @@ AGENT_TYPES = [getattr(Agents, attribute) for attribute in dir(Agents) if not at
                and attribute.endswith("Agent") and attribute != 'Agent']
 
 
-def get_trees_scores(fitness_func, generation, prepared_datasets: List[pd.DataFrame]):
-    scores = [(tree, fitness_agent(fitness_func, generation[tree], prepared_datasets)) for tree in generation.keys()]
+def get_trees_scores(fitness_func, generation, prepared_datasets: Dict[str, pd.DataFrame], log_transactions=False):
+    scores = [(tree, fitness_agent(fitness_func, generation[tree], prepared_datasets, tree, log_transactions=log_transactions))
+              for tree in generation.keys()]
     scores = pd.DataFrame(scores, columns=["treeID", "score"]).sort_values(by="score", ascending=False)
     scores = rolling_chance(scores)
     return scores

@@ -25,7 +25,7 @@ from .RelativeStrengthIndex import RSIAgent
 from .STC import STCAgent
 from .Stochastic import StochasticAgent
 from .StochasticRSI import StochasticRSIAgent
-from .Trend import TrendAgent
+# from .Trend import TrendAgent # Makes problems in the implementation
 from .TRIX import TRIXAgent
 from .TSI import TSIAgent
 from .UlcerIndex import UlcerIndexAgent

@@ -1,24 +1,35 @@
+import pandas as pd
 from bs4 import BeautifulSoup
 import requests
+from tqdm import tqdm
 
-S_P_WIKI_URL = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+STOCKS_URL = "https://swingtradebot.com/equities?page={}"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36"
+}
 
 
-def get_stock_list(n_stocks=10):
-    # Returns stocks names out of the S&P 500 broker.
-    stocks_list = []
+def get_stock_list(n_stocks=-1):
+    i = 1
+    resp = requests.get(STOCKS_URL.format(i), headers=HEADERS)
+    bar_tqdm = tqdm(total=131)
+    total = []
 
-    resp = requests.get(S_P_WIKI_URL)
-    soup = BeautifulSoup(resp.text)
+    while resp.status_code == 200:
+        soup = BeautifulSoup(resp.text)
+        table = soup.find("tbody")
 
-    table = soup.find("table", attrs={"id": "constituents"})
-    table_body = table.tbody
+        tr = table.find_all("tr")
+        for row in tr:
+            td = row.find_all("td")[0]
+            symbol = td.a.contents[0]
+            title = td.a.attrs["title"]
+            total.append({"symbol": symbol, "name": title})
 
-    for row in table_body.find_all("tr"):
-        columns = row.find_all("td")
-        for c in columns:
-            stocks_list.append(c.text.strip("\n"))
-            break
+        bar_tqdm.update()
+        i += 1
+        resp = requests.get(STOCKS_URL.format(i), headers=HEADERS)
 
-    return stocks_list[:n_stocks]
+    all_stocks = pd.DataFrame(total)
 
+    return all_stocks

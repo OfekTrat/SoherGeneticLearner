@@ -7,11 +7,15 @@ DEV_RANGE = 0.1
 HP_FILTER_CONST = 400
 
 
-def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close") -> pd.DataFrame:
+def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close"):
     data.reset_index(inplace=True)
 
-    cycle, trend = hpfilter(data[column_name], HP_FILTER_CONST)
-    function = calc_function(trend)
+    cycle, trend = hpfilter(data[column_name])
+    try:
+        function = calc_function(trend)
+    except Exception as e:
+        print(trend)
+        raise e
     deriviatives = get_deriviatives(function)
     get_trends(data, deriviatives, trend.index, window_size)
 
