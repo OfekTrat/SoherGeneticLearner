@@ -88,13 +88,16 @@ def main():
     #
     # print(amount)
 
+
     ###### TRAINING THE BOTS ######
     # te = TreeEvolution()
-    # scores = te.evolve(exponential_fitness, datasets, n_iterations=1, print_best=True)
+    # scores = te.evolve(exponential_fitness, datasets, n_iterations=100, print_best=True)
     # best_tree_id = scores.iloc[0].treeID.astype(int)
+    # print()
     # print(f"Best Score:{scores.iloc[0].score}, Best Tree ID: {best_tree_id}")
     # print(f"Worst Score: {scores.iloc[-1].score}")
     # best_tree = te.generation[best_tree_id]
+
 
     ##### SAVING THE BEST BOT ######
     # with open("best_tree", 'wb') as f:
