@@ -25,7 +25,7 @@ AGENT_TYPES = [getattr(Agents, attribute) for attribute in dir(Agents) if not at
                and attribute.endswith("Agent") and attribute != 'Agent']
 
 
-def get_trees_scores(fitness_func, generation, prepared_datasets: Dict[str, pd.DataFrame], log_transactions=False):
+def get_trees_scores(fitness_func, generation, prepared_datasets: List[dict], log_transactions=False):
     scores = [(tree, fitness_agent(fitness_func, generation[tree], prepared_datasets, tree, log_transactions=log_transactions))
               for tree in generation.keys()]
     scores = pd.DataFrame(scores, columns=["treeID", "score"]).sort_values(by="score", ascending=False)

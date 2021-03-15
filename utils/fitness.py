@@ -10,18 +10,21 @@ N_STOCKS = 10
 LOG_FOLDER = "logs\\"
 
 
-def fitness_agent(fitness_func, agent: Agent, prepared_datasets: Dict[str, DataFrame], tree_id: int, window=WINDOW,
+def fitness_agent(fitness_func, agent: Agent, prepared_datasets: List[dict], tree_id: int, window=WINDOW,
                   n_stocks=N_STOCKS, log_transactions=False):
     amount = 0
 
-    for symbol, data in prepared_datasets.items():
-        amount += fitness_func(agent, symbol, data, tree_id, window, n_stocks, log_transactions=log_transactions)
+    for row_data in prepared_datasets:
+        amount += fitness_func(agent, row_data, tree_id, window, n_stocks, log_transactions=log_transactions)
 
     return amount
 
 
-def simple_fitness(agent: Agent, symbol: str, prepared_data: DataFrame, tree_id, window=WINDOW, n_stocks=N_STOCKS,
+def simple_fitness(agent: Agent, row_data: dict, tree_id, window=WINDOW, n_stocks=N_STOCKS,
                    log_transactions=False):
+    prepared_data = row_data["data"]
+    symbol = row_data["symbol"]
+
     amount = 0
     is_invested = False
 
@@ -49,8 +52,10 @@ def simple_fitness(agent: Agent, symbol: str, prepared_data: DataFrame, tree_id,
     return amount
 
 
-def exponential_fitness(agent: Agent, symbol: str, prepared_data: pd.DataFrame, tree_id: int = 0, window=WINDOW, n_stocks=N_STOCKS,
+def exponential_fitness(agent: Agent, row_data: pd.DataFrame, tree_id: int = 0, window=WINDOW, n_stocks=N_STOCKS,
                         log_transactions=False):
+    prepared_data = row_data["data"]
+    symbol = row_data["symbol"]
 
     first_amount = amount = 1000
     is_invested = False

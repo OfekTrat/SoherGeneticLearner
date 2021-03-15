@@ -21,7 +21,7 @@ class TreeEvolution(object):
 
         self.generation = TreeEnv.create_gen(self.n_trees)
 
-    def prepare_data(self, data: Dict[str, pd.DataFrame]):
+    def prepare_data(self, data: List[dict]):
         prepare_data_functions = {}
 
         for tree_id in self.generation.keys():
@@ -29,11 +29,12 @@ class TreeEvolution(object):
                 if agent_id not in prepare_data_functions:
                     prepare_data_functions[agent_id] = self.generation[tree_id].agent_id[agent_id].prepare_data
 
-        for symbol, dataset in data.items():
+        for row in data:
+            dataset = row["data"]
             for func_id in prepare_data_functions.keys():
                 prepare_data_functions[func_id](dataset)
 
-    def evolve(self, fitness_func, prepared_datasets: Dict[str, pd.DataFrame], n_iterations, print_best=False,
+    def evolve(self, fitness_func, prepared_datasets: List[dict], n_iterations, print_best=False,
                log_transactions=False) -> pd.DataFrame:
         scores = None
 
