@@ -4,11 +4,12 @@ from copy import deepcopy
 
 import TreeEnvironment.TreeEnv as TreeEnv
 import pandas as pd
+from tqdm import tqdm
 
 
 N_TREES = 150
 MUTATED_PERCENTAGE = 0.2
-CONVERGED_PERCENTAGE = 0.6
+CONVERGED_PERCENTAGE = 0.5
 OLD_TREES_PERCENTAGE = 0.03
 
 

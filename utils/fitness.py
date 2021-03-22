@@ -57,7 +57,7 @@ def exponential_fitness(agent: Agent, row_data: pd.DataFrame, tree_id: int = 0, 
     prepared_data = row_data["data"]
     symbol = row_data["symbol"]
 
-    first_amount = amount = 1000
+    first_amount = amount = 10000
     is_invested = False
 
     if agent.n_outputs == 3:

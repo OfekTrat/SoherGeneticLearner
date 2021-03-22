@@ -22,7 +22,7 @@ def sample_data(n=5):
 
     datasets = []
     for sample in samples:
-        fn_data = sample.split("\\")[1].split('.')[0].split("_")
+        fn_data = sample.replace(".U", "").split("\\")[1].split('.')[0].split("_")
         symbol = fn_data[0]
         start_date = datetime.strptime(fn_data[1], "%Y%m%d")
         end_date = datetime.strptime(fn_data[2], "%Y%m%d")
@@ -71,37 +71,50 @@ def main():
 
 
     ### SAMPLING DATA ####
-    # datasets = sample_data()
-    # print(datasets)
-
+    datasets = sample_data(500)
 
 
     ###### CHECKING THE BEST BOT ######
+    # testing_stocks = ["data\\ETN_20190101_20210316.csv", "data\\ETN_20190101_20210316.csv"]
+    # datasets = []
+    # for fn in testing_stocks:
+    #     fn_data = fn.split("\\")[1].split('.')[0].split("_")
+    #     symbol = fn_data[0]
+    #     start_date = datetime.strptime(fn_data[1], "%Y%m%d")
+    #     end_date = datetime.strptime(fn_data[2], "%Y%m%d")
+    #
+    #     data = {
+    #         "symbol": symbol,
+    #         "start_date": start_date,
+    #         "end_date": end_date,
+    #         "data": pd.read_csv(fn)
+    #     }
+    #     datasets.append(data)
+    #
+    #
     # with open("best_tree", "rb") as f:
     #     best_tree = pickle.load(f)
     #
     # amount = 0
     # for row in datasets:
-    #     symbol = row["symbol"]
-    #     data = row["data"]
-    #     amount += exponential_fitness(best_tree, symbol, data, log_transactions=True)
+    #     amount += exponential_fitness(best_tree, row, log_transactions=True)
     #
     # print(amount)
 
 
     ###### TRAINING THE BOTS ######
-    # te = TreeEvolution()
-    # scores = te.evolve(exponential_fitness, datasets, n_iterations=100, print_best=True)
-    # best_tree_id = scores.iloc[0].treeID.astype(int)
-    # print()
-    # print(f"Best Score:{scores.iloc[0].score}, Best Tree ID: {best_tree_id}")
-    # print(f"Worst Score: {scores.iloc[-1].score}")
-    # best_tree = te.generation[best_tree_id]
+    te = TreeEvolution()
+    scores = te.evolve(exponential_fitness, datasets, n_iterations=150, print_best=True)
+    best_tree_id = scores.iloc[0].treeID.astype(int)
+    print()
+    print(f"Best Score:{scores.iloc[0].score}, Best Tree ID: {best_tree_id}")
+    print(f"Worst Score: {scores.iloc[-1].score}")
+    best_tree = te.generation[best_tree_id]
 
 
     ##### SAVING THE BEST BOT ######
-    # with open("best_tree", 'wb') as f:
-    #     pickle.dump(best_tree, f)
+    with open("best_tree", 'wb') as f:
+        pickle.dump(best_tree, f)
 
 
 if __name__ == '__main__':
