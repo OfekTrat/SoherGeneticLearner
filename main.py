@@ -1,12 +1,9 @@
 import pickle
 import pandas as pd
 import yfinance as yf
-from TreeEnvironment import TreeEnv
 from utils.fitness import exponential_fitness
-from TreeEnvironment.TreeEvolution import TreeEvolution
-from data_classes.DecisionTree import DecisionTreeAgent
-from utils.stocksList import get_stock_list
-from data_classes import Agents
+from Tree.TreeEvolution import TreeEvolution
+import Agents
 from datetime import datetime
 from tqdm import tqdm
 import os
@@ -40,7 +37,7 @@ def sample_data(n=5):
 
 def data_collection():
     agents = [getattr(Agents, agent)() for agent in dir(Agents) if agent.endswith("Agent") and agent != "Agent"]
-    stocks = pd.read_csv("all_stocks.csv")
+    stocks = pd.read_csv("data/all_stocks.csv")
 
     for row in tqdm(stocks.itertuples()):
         start_date = datetime(2019, 1, 1)

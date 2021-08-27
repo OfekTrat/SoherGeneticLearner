@@ -1,11 +1,8 @@
 import configparser
-from typing import List, Dict
-from copy import deepcopy
+from typing import List
 
-import TreeEnvironment.TreeEnv as TreeEnv
+import Tree.TreeEnv as TreeEnv
 import pandas as pd
-from tqdm import tqdm
-
 
 N_TREES = 150
 MUTATED_PERCENTAGE = 0.2
