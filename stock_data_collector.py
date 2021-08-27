@@ -36,3 +36,16 @@ class StockDataCollector:
         for stock_name, stock_data in collected_data.items():
             path = os.path.join(data_folder, stock_name + ".pkl")
             stock_data.to_pickle(path)
+
+    @staticmethod
+    def load_collection(path: str) -> Dict[str, pd.DataFrame]:
+        data = dict()
+        filenames = os.listdir(path)
+
+        for filename in filenames:
+            stock_name = filename.split(".")[0]
+            full_path = os.path.join(path, filename)
+            stock_data = pd.read_pickle(full_path)
+            data[stock_name] = stock_data
+
+        return data
