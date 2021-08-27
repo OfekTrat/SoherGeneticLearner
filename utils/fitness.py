@@ -1,7 +1,6 @@
 import pandas as pd
-from typing import List, Dict
-from pandas import DataFrame
-from data_classes.Agents.Agent import Agent
+from typing import List
+from Agents.Agent import Agent
 from datetime import datetime
 
 

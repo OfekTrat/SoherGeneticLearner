@@ -1,7 +1,7 @@
-from random import shuffle, choice
+from random import choice
 from anytree import Node, RenderTree
 from typing import List
-from ..Agents.Agent import Agent
+from Agents.Agent import Agent
 
 OPTIONAL_OUTPUTS = {
     0: "NOTHING",

@@ -1,14 +1,14 @@
-from typing import List, Dict
+from typing import List
 
 import pandas as pd
 from copy import deepcopy
 from random import choice, randint, random
 
 # Agent importing
-import data_classes.Agents as Agents
+import Agents as Agents
 
 # Tree Importing
-from data_classes.DecisionTree.DecisionTreeAgent import DTA
+from Tree.DecisionTreeAgent import DTA
 from utils.fitness import fitness_agent
 
 
