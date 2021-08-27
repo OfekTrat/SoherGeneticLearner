@@ -24,7 +24,7 @@ class StockDataCollector:
 
     @classmethod
     def __fetch_data(cls, stock_symbol: str, interval: str,
-                     from_time: Optional[datetime] = None, to_time: Optional[datetime] = None) -> pd.DataFrame:
+                     from_time: Optional[datetime], to_time: Optional[datetime]) -> pd.DataFrame:
         ticker = yf.Ticker(stock_symbol)
         return ticker.history(interval=interval, start=from_time, end=to_time)
 
