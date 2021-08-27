@@ -34,5 +34,5 @@ class StockDataCollector:
             os.mkdir(data_folder)
         
         for stock_name, stock_data in collected_data.items():
-            path = os.path.join(data_folder, stock_name)
+            path = os.path.join(data_folder, stock_name + ".pkl")
             stock_data.to_pickle(path)
