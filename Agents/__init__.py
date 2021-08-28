@@ -3,7 +3,6 @@ from .Aroon import AroonAgent
 from .AverageDirectionalIndex import ADXAgent
 from .AwesomeOscillator import AwesomeOscillatorAgent
 from .BollingerChannelPercantageBand import BCPBAgent
-from .CandleStick import CandleStickAgent
 from .ChaikinMoneyFlow import CHFAgent
 from .CommodityChannelIndex import CCIAgent
 from .DetrendPriceOscillator import DPOAgent

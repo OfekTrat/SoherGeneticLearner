@@ -7,7 +7,7 @@ DEV_RANGE = 0.1
 HP_FILTER_CONST = 400
 
 
-def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close"):
+def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close") -> pd.DataFrame:
     data.reset_index(inplace=True)
 
     cycle, trend = hpfilter(data[column_name])
@@ -16,8 +16,9 @@ def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close"):
     except Exception as e:
         print(trend)
         raise e
+
     deriviatives = get_deriviatives(function)
-    get_trends(data, deriviatives, trend.index, window_size)
+    return get_trends(data, deriviatives, trend.index, window_size)
 
 
 def calc_function(trend):
@@ -30,10 +31,11 @@ def get_deriviatives(function):
     return np.polyder(function)
 
 
-def get_trends(data: pd.DataFrame, deriviatives: np.poly1d, indices, window_size):
+def get_trends(data: pd.DataFrame, deriviatives: np.poly1d, indices, window_size) -> pd.DataFrame:
+    data_copy = data.copy()
     devs = deriviatives(indices)
-    data["UpTrend"] = 0
-    data["DownTrend"] = 0
+    data_copy["UpTrend"] = 0
+    data_copy["DownTrend"] = 0
 
     count_up_trend = 0
     count_down_trend = 0
@@ -49,9 +51,11 @@ def get_trends(data: pd.DataFrame, deriviatives: np.poly1d, indices, window_size
                 count_down_trend += 1
 
         if count_down_trend == window_size:
-            data.loc[i + window_size, "DownTrend"] = trend_exists
+            data_copy.loc[i + window_size, "DownTrend"] = trend_exists
         elif count_up_trend == window_size:
-            data.loc[i + window_size, "UpTrend"] = trend_exists
+            data_copy.loc[i + window_size, "UpTrend"] = trend_exists
 
         count_up_trend = 0
         count_down_trend = 0
+
+    return data_copy[["UpTrend", "DownTrend"]]
