@@ -5,16 +5,15 @@ import ta.momentum as momentum
 
 class RSIAgent(Agent):
     def __init__(self, window=14):
-        super().__init__()
         self.window = window
         self.column_name = f"rsi_{window}"
         self.n_outputs = 3
 
-    def prepare_data(self, data):
+    def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         rsi = momentum.RSIIndicator(data["Close"], self.window)
-        data[self.column_name] = rsi.rsi()
+        return rsi.rsi()
 
-    def get_signal(self, prepared_data):
+    def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > 70:
             return 2  # SELL
         elif prepared_data[self.column_name].iloc[-1] < 30:
@@ -22,5 +21,5 @@ class RSIAgent(Agent):
         else:
             return 0  # NOTHING
 
-    def id(self):
+    def id(self) -> str:
         return self.column_name

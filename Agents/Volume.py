@@ -4,7 +4,6 @@ import pandas as pd
 
 class VolumeAgent(Agent):
     def __init__(self, small_window = 3, large_window = 14):
-        super().__init__()
         self.small_window = small_window
         self.large_window = large_window
 
@@ -17,10 +16,9 @@ class VolumeAgent(Agent):
         else:
             return 0
 
-    def prepare_data(self, data):
-        data[self.column_name] = data["Volume"].rolling(self.small_window).mean() - \
-                                 data["Volume"].rolling(self.large_window).mean()
+    def prepare_data(self, data: pd.DataFrame) -> pd.Series:
+        return data["Volume"].rolling(self.small_window).mean() - data["Volume"].rolling(self.large_window).mean()
 
-    def id(self):
+    def id(self) -> str:
         return self.column_name
 

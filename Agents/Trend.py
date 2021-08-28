@@ -5,7 +5,6 @@ from utils.trend_detector import detect_trends
 
 class TrendAgent(Agent):
     def __init__(self):
-        super().__init__()
         self.n_outputs = 3
 
     @staticmethod
@@ -17,8 +16,8 @@ class TrendAgent(Agent):
         else:
             return 2
 
-    def prepare_data(self, data):
-        detect_trends(data)
+    def prepare_data(self, data: pd.DataFrame) -> pd.DataFrame:
+        return detect_trends(data)
 
-    def id(self):
+    def id(self) -> str:
         return "trend_id"
