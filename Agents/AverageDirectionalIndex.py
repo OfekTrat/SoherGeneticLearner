@@ -1,13 +1,15 @@
 import pandas as pd
 import ta.trend as trend
-from .Agent import Agent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 
 import warnings
 warnings.filterwarnings("ignore")
 
 
-class ADXAgent(Agent):
+class ADXIAgent(AbsAgent, ISignaler):
     def __init__(self):
+        super().__init__()
         self.n_outputs = 4
         self.column_name = "adx"
 
@@ -23,7 +25,7 @@ class ADXAgent(Agent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         adx_ind = trend.ADXIndicator(data["High"], data["Low"], data["Close"])
-        return adx_ind.adx()
+        return self._change_column_name(adx_ind.adx())
 
     def id(self) -> str:
         return self.column_name

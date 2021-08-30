@@ -14,7 +14,6 @@ def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close") -> pd.
     try:
         function = calc_function(trend)
     except Exception as e:
-        print(trend)
         raise e
 
     deriviatives = get_deriviatives(function)
