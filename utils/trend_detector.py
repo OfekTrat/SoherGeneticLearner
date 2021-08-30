@@ -16,8 +16,8 @@ def detect_trends(data: pd.DataFrame, window_size=5, column_name="Close") -> pd.
     except Exception as e:
         raise e
 
-    deriviatives = get_deriviatives(function)
-    return get_trends(data, deriviatives, trend.index, window_size)
+    derivatives = get_derivatives(function)
+    return get_trends(data, derivatives, trend.index, window_size)
 
 
 def calc_function(trend):
@@ -26,7 +26,7 @@ def calc_function(trend):
     return function
 
 
-def get_deriviatives(function):
+def get_derivatives(function):
     return np.polyder(function)
 
 
