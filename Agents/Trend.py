@@ -1,10 +1,12 @@
 import pandas as pd
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 from utils.trend_detector import detect_trends
 
 
-class TrendIAgent(IAgent):
+class TrendIAgent(AbsAgent, ISignaler):
     def __init__(self):
+        super().__init__()
         self.n_outputs = 3
 
     @staticmethod

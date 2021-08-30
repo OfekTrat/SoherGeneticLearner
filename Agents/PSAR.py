@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.trend as trend
 import pandas as pd
 
 
-class PSARIAgent(IAgent):
+class PSARIAgent(AbsAgent, ISignaler):
     def __init__(self, step=0.02, max_step=0.2):
+        super().__init__()
         self.step = step
         self.max_step = max_step
         self.column_name = f"psar_{step}_{max_step}"
@@ -16,7 +18,7 @@ class PSARIAgent(IAgent):
         pasr_up = pasr_up.apply(lambda x: x * 2)
         psar_down = psar.psar_down_indicator()
         psar_indicator = pasr_up + psar_down
-        return psar_indicator
+        return self._change_column_name(psar_indicator)
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         return int(prepared_data[self.column_name].iloc[-1].item())

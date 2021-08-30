@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import pandas as pd
 import ta.momentum as momentum
 
 
-class StochasticRSIIAgent(IAgent):
+class StochasticRSIIAgent(AbsAgent, ISignaler):
     def __init__(self, window=14, smooth1=3, smooth2=3):
+        super().__init__()
         self.window = window
         self.smooth1 = smooth1
         self.smooth2 = smooth2
@@ -14,7 +16,7 @@ class StochasticRSIIAgent(IAgent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         stoch_rsi = momentum.StochRSIIndicator(data["Close"], self.window, self.smooth1, self.smooth2)
-        return stoch_rsi.stochrsi()
+        return self._change_column_name(stoch_rsi.stochrsi())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > 0.80:

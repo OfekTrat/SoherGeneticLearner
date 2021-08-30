@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.trend as trend
 import pandas as pd
 
 
-class ICIAgent(IAgent):
+class ICIAgent(AbsAgent, ISignaler):
     def __init__(self, window1=9, window2=26, window3=52):
+        super().__init__()
         self.window1 = window1
         self.window2 = window2
         self.window3 = window3
@@ -13,7 +15,7 @@ class ICIAgent(IAgent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         ichimoku = trend.IchimokuIndicator(data["High"], data["Low"], self.window1, self.window2, self.window3)
-        return ichimoku.ichimoku_conversion_line() - ichimoku.ichimoku_base_line()
+        return self._change_column_name(ichimoku.ichimoku_conversion_line() - ichimoku.ichimoku_base_line())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > 0:

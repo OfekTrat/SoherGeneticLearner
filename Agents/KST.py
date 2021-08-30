@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.trend as trend
 import pandas as pd
 
 
-class KSTIAgent(IAgent):
+class KSTIAgent(AbsAgent, ISignaler):
     def __init__(self, roc1=10, roc2=15, roc3=20, roc4=30, window1=10, window2=10, window3=10, window4=15):
+        super().__init__()
         self.roc1 = roc1
         self.roc2 = roc2
         self.roc3 = roc3
@@ -22,7 +24,7 @@ class KSTIAgent(IAgent):
         kst = trend.KSTIndicator(data["Close"], self.roc1, self.roc2, self.roc3, self.roc4,
                                  self.window1, self.window2, self.window3, self.window4)
 
-        return kst.kst_diff()
+        return self._change_column_name(kst.kst_diff())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > 0:

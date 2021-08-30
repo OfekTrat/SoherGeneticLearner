@@ -1,19 +1,21 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import pandas as pd
 import ta.momentum as momentum
 
 
-class ROCIAgent(IAgent):
+class ROCIAgent(AbsAgent, ISignaler):
     TREND_RANGE = 2
 
     def __init__(self, window=12):
+        super().__init__()
         self.window = window
         self.column_name = f"roc_{window}"
         self.n_outputs = 3
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         roc = momentum.ROCIndicator(data["Close"], self.window)
-        return roc.roc()
+        return self._change_column_name(roc.roc())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > self.TREND_RANGE:

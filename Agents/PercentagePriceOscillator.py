@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import pandas as pd
 import ta.momentum as momentum
 
 
-class PPOIAgent(IAgent):
+class PPOIAgent(AbsAgent, ISignaler):
     def __init__(self, slow_window=26, fast_window=12, signal_window=9):
+        super().__init__()
         self.slow_window = slow_window
         self.fast_window = fast_window
         self.signal_window = signal_window
@@ -14,7 +16,7 @@ class PPOIAgent(IAgent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         ppo = momentum.PercentagePriceOscillator(data["Close"], self.slow_window, self.fast_window, self.signal_window)
-        return ppo.ppo_signal()
+        return self._change_column_name(ppo.ppo_signal())
 
     def get_signal(self, prepared_data) -> int:
         if prepared_data[self.column_name].iloc[-1] > 0:

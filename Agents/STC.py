@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.trend as trend
 import pandas as pd
 
 
-class STCIAgent(IAgent):
+class STCIAgent(AbsAgent, ISignaler):
     def __init__(self, slow_window=50, fast_window=23, cycle=10, smooth1=3, smooth2=3):
+        super().__init__()
         self.slow_window = slow_window
         self.fast_window = fast_window
         self.cycle = cycle
@@ -17,7 +19,7 @@ class STCIAgent(IAgent):
         stc = trend.STCIndicator(data["Close"], self.slow_window, self.fast_window,
                                  self.cycle, self.smooth1, self.smooth2)
 
-        return stc.stc()
+        return self._change_column_name(stc.stc())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if 25 < prepared_data[self.column_name].iloc[-1] < 75:

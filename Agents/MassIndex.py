@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.trend as trend
 import pandas as pd
 
 
-class MIIAgent(IAgent):
+class MIIAgent(AbsAgent, ISignaler):
     def __init__(self, fast_window=9, slow_window=25):
+        super().__init__()
         self.fast_window = fast_window
         self.slow_window = slow_window
 
@@ -13,7 +15,7 @@ class MIIAgent(IAgent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         mi = trend.MassIndex(data["High"], data["Low"], self.fast_window, self.slow_window)
-        return mi.mass_index()
+        return self._change_column_name(mi.mass_index())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] > 26.5:
