@@ -19,11 +19,8 @@ def fitness_agent(fitness_func, agent: Agent, prepared_datasets: List[dict], tre
     return amount
 
 
-def simple_fitness(agent: Agent, row_data: dict, tree_id, window=WINDOW, n_stocks=N_STOCKS,
+def simple_fitness(agent: Agent, prepared_data: pd.DataFrame, tree_id, window=WINDOW, n_stocks=N_STOCKS,
                    log_transactions=False):
-    prepared_data = row_data["data"]
-    symbol = row_data["symbol"]
-
     amount = 0
     is_invested = False
 

@@ -89,7 +89,8 @@ class DecisionTree(Agent):
 
     def prepare_data(self, data: pd.DataFrame) -> pd.DataFrame:
         all_columns = [agent.prepare_data(data).rename(agent_id) for agent_id, agent in self.agents.items()]
-        prepared_data = pd.concat(all_columns, axis=1)
+        prepared_data = pd.concat(all_columns + [data.Close], axis=1)
+
         return prepared_data
 
     def count_leaves(self) -> int:
