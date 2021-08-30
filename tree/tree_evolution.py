@@ -9,35 +9,15 @@ from .decision_tree import DecisionTree
 from fitness.fitness_generation import FitnessGeneration
 from fitness.ifitness import IFitness
 
-N_TREES = 10
-MUTATED_PERCENTAGE = 0.2
-CONVERGED_PERCENTAGE = 0.5
-OLD_TREES_PERCENTAGE = 0.1
-
 
 class TreeEvolution(object):
-    def __init__(self, config_file=None):
-        if config_file:
-            self.__load_file(config_file)
-        else:
-            self.__init_defaults()
-
-        self.generation = TreeEnv.generate_trees(self.n_trees)
-
-    def __load_file(self, config_file):
-        config = configparser.SafeConfigParser()
-        config.read(config_file)
-        self.n_trees = config.get("GENERATION", "N_TREES")
-        self.n_iterations = config.get("EVOLUTION", "N_ITERATIONS")
-        self.mutated_percentage = config.get("GENERATION", "MUTATED_PERCENTAGE")
-        self.converged_percentage = config.get("GENERATION", "CONVERGED_PERCENTAGE")
-        self.old_trees_percentage = config.get("GENERATION", "OLD_TREES_PERCENTAGE")
-
-    def __init_defaults(self):
-        self.n_trees = N_TREES
-        self.mutated_percentage = MUTATED_PERCENTAGE
-        self.converged_percentage = CONVERGED_PERCENTAGE
-        self.old_trees_percentage = OLD_TREES_PERCENTAGE
+    def __init__(self, n_trees: int, mutated_percentage: float,
+                 converged_percentage: float, old_trees_percentage: float):
+        self.n_trees = n_trees
+        self.mutated_percentage = mutated_percentage
+        self.converged_percentage = converged_percentage
+        self.old_trees_percentage = old_trees_percentage
+        self.generation = TreeEnv.generate_trees(n_trees)
 
     def prepare_data(self, data: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         all_trees = [tree for tree_id, tree in self.generation.items()]
@@ -55,29 +35,31 @@ class TreeEvolution(object):
             for stock_name, table in data.items()
         }
 
-    def evolve(self, fitness_func: IFitness, prepared_datasets: Dict[str, pd.DataFrame], n_iterations: int,
-               print_best=False) -> pd.DataFrame:
+    def evolve(self, fitness_func: IFitness, prepared_datasets: Dict[str, pd.DataFrame],
+               n_iterations: int) -> pd.DataFrame:
         scores = None
 
         for i in range(n_iterations):
             scores = self.__get_scores(fitness_func, prepared_datasets) \
                 .sort_values("score", ascending=False, ignore_index=True)
 
-            if print_best:
-                print("Best Tree Amount:", scores.head(1)["score"].item(),
-                      "TreeID:", scores.head(1)["treeID"].item(),
-                      "Iteration:", i)
+            if self.__is_last_iteration(i, n_iterations):
+                break
 
-            if not self.__is_last_iteration(i, n_iterations):
-                self.generation = self.__next_generation_by_score(scores)
+            self.__print_best_tree(scores, i)
+            self.generation = self.__next_generation_by_score(scores)
 
         return scores
 
     def __get_scores(self, fitness_func: IFitness, prepared_datasets: Dict[str, pd.DataFrame]):
         return FitnessGeneration.run(fitness_func, self.generation, prepared_datasets)
 
-    @staticmethod
-    def __is_last_iteration(i: int, n_iterations: int) -> bool:
+    def __print_best_tree(self, scores: pd.DataFrame, iteration: int):
+        print("Best Tree Amount:", scores.head(1)["score"].item(),
+              "TreeID:", scores.head(1)["treeID"].item(),
+              "Iteration:", iteration)
+
+    def __is_last_iteration(self, i: int, n_iterations: int) -> bool:
         return (i + 1) == n_iterations
 
     def __next_generation_by_score(self, scores: pd.DataFrame):
