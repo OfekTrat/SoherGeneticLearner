@@ -1,10 +1,12 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.momentum as momentum
 import pandas as pd
 
 
-class UltimateOscillatorIAgent(IAgent):
+class UltimateOscillatorIAgent(AbsAgent, ISignaler):
     def __init__(self, window1=7, window2=14, window3=28):
+        super().__init__()
         self.window1 = window1
         self.window2 = window2
         self.window3 = window3
@@ -15,7 +17,7 @@ class UltimateOscillatorIAgent(IAgent):
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
         uo = momentum.UltimateOscillator(data["High"], data["Low"], data["Close"], self.window1, self.window2,
                                          self.window3)
-        return uo.ultimate_oscillator()
+        return self._change_column_name(uo.ultimate_oscillator())
 
     def get_signal(self, prepared_data: pd.DataFrame) -> int:
         if prepared_data[self.column_name].iloc[-1] < 30:

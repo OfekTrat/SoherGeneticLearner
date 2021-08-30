@@ -1,13 +1,15 @@
 import pandas as pd
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import ta.momentum as momentum
 
 
 AGENT_TYPE = "Stochastic"
 
 
-class StochasticIAgent(IAgent):
+class StochasticIAgent(AbsAgent, ISignaler):
     def __init__(self, window=14, smooth_window=3):
+        super().__init__()
         self.n_outputs = 3
         self.window = window
         self.smooth = smooth_window
@@ -26,7 +28,7 @@ class StochasticIAgent(IAgent):
         stochastic = momentum.StochasticOscillator(data["High"], data["Low"], data["Close"],
                                               self.window, self.smooth)
 
-        return stochastic.stoch_signal()
+        return self._change_column_name(stochastic.stoch_signal())
 
     def id(self) -> str:
         return self.column_name

@@ -1,9 +1,11 @@
-from agent_interfaces.Agent import IAgent
+from agent_interfaces.abs_agent import AbsAgent
+from agent_interfaces.isignaler import ISignaler
 import pandas as pd
 
 
-class VolumeIAgent(IAgent):
+class VolumeIAgent(AbsAgent, ISignaler):
     def __init__(self, small_window = 3, large_window = 14):
+        super().__init__()
         self.small_window = small_window
         self.large_window = large_window
 
@@ -17,7 +19,9 @@ class VolumeIAgent(IAgent):
             return 0
 
     def prepare_data(self, data: pd.DataFrame) -> pd.Series:
-        return data["Volume"].rolling(self.small_window).mean() - data["Volume"].rolling(self.large_window).mean()
+        return self._change_column_name(
+            data["Volume"].rolling(self.small_window).mean() - data["Volume"].rolling(self.large_window).mean()
+        )
 
     def id(self) -> str:
         return self.column_name
