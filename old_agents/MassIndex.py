@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class MIAgent(Agent):
+class MIIAgent(IAgent):
     def __init__(self, fast_window=9, slow_window=25):
         self.fast_window = fast_window
         self.slow_window = slow_window

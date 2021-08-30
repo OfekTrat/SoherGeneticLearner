@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class VortexAgent(Agent):
+class VortexIAgent(IAgent):
     def __init__(self, window=14):
         self.window = window
         self.column_name = f"vortex_{window}"

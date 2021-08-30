@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.momentum as momentum
 import pandas as pd
 
 
-class WilliamRAgent(Agent):
+class WilliamRIAgent(IAgent):
     def __init__(self, lbp=14):
         self.lbp = 14
         self.column_name = f"william_r_{lbp}"

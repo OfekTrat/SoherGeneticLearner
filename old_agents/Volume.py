@@ -1,8 +1,8 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 
 
-class VolumeAgent(Agent):
+class VolumeIAgent(IAgent):
     def __init__(self, small_window = 3, large_window = 14):
         self.small_window = small_window
         self.large_window = large_window

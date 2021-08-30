@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class KSTAgent(Agent):
+class KSTIAgent(IAgent):
     def __init__(self, roc1=10, roc2=15, roc3=20, roc4=30, window1=10, window2=10, window3=10, window4=15):
         self.roc1 = roc1
         self.roc2 = roc2

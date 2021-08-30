@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.volume as volume
 import pandas as pd
 
 
-class MFIAgent(Agent):
+class MFIIAgent(IAgent):
     def __init__(self, window=14):
         self.window = window
         self.column_name = f"mfi_{window}"

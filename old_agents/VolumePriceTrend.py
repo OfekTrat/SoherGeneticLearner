@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.volume as volume
 import pandas as pd
 
 
-class VolumePriceTrendAgent(Agent):
+class VolumePriceTrendIAgent(IAgent):
     def __init__(self):
         self.column_name = "vpt"
         self.n_outputs = 2

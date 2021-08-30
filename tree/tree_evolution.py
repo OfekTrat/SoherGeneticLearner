@@ -1,17 +1,18 @@
 import configparser
 from typing import List, Dict
-from .tree_env import get_trees_scores
 import pandas as pd
-from random import random
-from .tmp_tree_env import TreeEnv
+from random import randint
+from .tree_env import TreeEnv
 from .tree_mutator import TreeMutator
 from .tree_converger import TreeConverger
 from .decision_tree import DecisionTree
+from fitness.fitness_generation import FitnessGeneration
+from fitness.ifitness import IFitness
 
-N_TREES = 150
+N_TREES = 10
 MUTATED_PERCENTAGE = 0.2
 CONVERGED_PERCENTAGE = 0.5
-OLD_TREES_PERCENTAGE = 0.03
+OLD_TREES_PERCENTAGE = 0.1
 
 
 class TreeEvolution(object):
@@ -38,7 +39,7 @@ class TreeEvolution(object):
         self.converged_percentage = CONVERGED_PERCENTAGE
         self.old_trees_percentage = OLD_TREES_PERCENTAGE
 
-    def prepare_data(self, data: Dict[str, pd.DataFrame]):
+    def prepare_data(self, data: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
         all_trees = [tree for tree_id, tree in self.generation.items()]
         all_agents = set([(agent_name, agent) for tree in all_trees for agent_name, agent in tree.agents.items()])
         prepare_funcs = list()
@@ -54,12 +55,13 @@ class TreeEvolution(object):
             for stock_name, table in data.items()
         }
 
-    def evolve(self, fitness_func, prepared_datasets: Dict[str, pd.DataFrame], n_iterations, print_best=False,
-               log_transactions=False) -> pd.DataFrame:
+    def evolve(self, fitness_func: IFitness, prepared_datasets: Dict[str, pd.DataFrame], n_iterations: int,
+               print_best=False) -> pd.DataFrame:
         scores = None
 
         for i in range(n_iterations):
-            scores = self.__get_scores(fitness_func, prepared_datasets, log_transactions)
+            scores = self.__get_scores(fitness_func, prepared_datasets) \
+                .sort_values("score", ascending=False, ignore_index=True)
 
             if print_best:
                 print("Best Tree Amount:", scores.head(1)["score"].item(),
@@ -71,8 +73,8 @@ class TreeEvolution(object):
 
         return scores
 
-    def __get_scores(self, fitness_func, prepared_datasets, log_transactions):
-        return get_trees_scores(fitness_func, self.generation, prepared_datasets, log_transactions)
+    def __get_scores(self, fitness_func: IFitness, prepared_datasets: Dict[str, pd.DataFrame]):
+        return FitnessGeneration.run(fitness_func, self.generation, prepared_datasets)
 
     @staticmethod
     def __is_last_iteration(i: int, n_iterations: int) -> bool:
@@ -109,12 +111,6 @@ class TreeEvolution(object):
         return [self.generation[tree_id] for tree_id in tree_scores["treeID"].head(n_old_trees)]
 
     def __get_tree_by_chance(self, tree_scores: pd.DataFrame) -> DecisionTree:
-        chance = random()
-        tree_id = int(tree_scores.loc[tree_scores["Chance"] > chance].iloc[-1]["treeID"])
+        chance = randint(int(tree_scores.score.min()), int(tree_scores.score.max()))
+        tree_id = tree_scores.loc[tree_scores["score"] > chance].iloc[-1]["treeID"]
         return self.generation[tree_id]
-
-
-
-
-
-

@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class STCAgent(Agent):
+class STCIAgent(IAgent):
     def __init__(self, slow_window=50, fast_window=23, cycle=10, smooth1=3, smooth2=3):
         self.slow_window = slow_window
         self.fast_window = fast_window

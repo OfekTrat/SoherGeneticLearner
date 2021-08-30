@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 import ta.momentum as momentum
 
 
-class ROCAgent(Agent):
+class ROCIAgent(IAgent):
     TREND_RANGE = 2
 
     def __init__(self, window=12):

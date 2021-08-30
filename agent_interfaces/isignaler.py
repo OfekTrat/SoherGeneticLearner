@@ -1,8 +1,9 @@
 import pandas as pd
-from typing import Protocol, Union
+from typing import Union
+from typing import Protocol
 
 
-class Agent(Protocol):
+class ISignaler(Protocol):
     def prepare_data(self, data: pd.DataFrame) -> Union[pd.DataFrame, pd.Series]:
         raise NotImplementedError
 

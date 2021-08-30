@@ -1,10 +1,10 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.momentum as momentum
 import pandas as pd
 
 
 
-class TSIAgent(Agent):
+class TSIIAgent(IAgent):
     def __init__(self, slow_window=25, fast_window=13):
         self.slow_window = slow_window
         self.fast_window = fast_window

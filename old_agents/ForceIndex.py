@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.volume as volume
 import pandas as pd
 
 
-class ForceIndexAgent(Agent):
+class ForceIndexIAgent(IAgent):
     def __init__(self, window=13):
         self.window = window
         self.column_name = f"force_{window}"

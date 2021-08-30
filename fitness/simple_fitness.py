@@ -1,5 +1,5 @@
 import pandas as pd
-from Agents import Agent
+from agent_interfaces.isignaler import ISignaler
 from .ifitness import IFitness
 
 
@@ -7,20 +7,20 @@ class SimpleFitness(IFitness):
     WINDOW = 2
 
     @classmethod
-    def run(cls, agent: Agent, data: pd.DataFrame) -> float:
+    def run(cls, agent: ISignaler, data: pd.DataFrame) -> float:
         signals = cls.__calc_signals(agent, data)
         signals = pd.DataFrame({"price": data.Close, "signal": signals})
         profits = cls.__calc_profits(signals)
         return profits
 
     @classmethod
-    def __calc_signals(cls, agent: Agent, data: pd.DataFrame) -> pd.Series:
+    def __calc_signals(cls, agent: ISignaler, data: pd.DataFrame) -> pd.Series:
         return data.rolling(window=cls.WINDOW).apply(
             lambda window: cls.__print_window(data, agent, window)
         ).iloc[:, 0]
 
     @classmethod
-    def __print_window(cls, data: pd.DataFrame, agent: Agent, window: pd.Series) -> int:
+    def __print_window(cls, data: pd.DataFrame, agent: ISignaler, window: pd.Series) -> int:
         data_slice = data.loc[window.index]
         return agent.get_signal(data_slice)
 

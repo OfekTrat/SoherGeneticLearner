@@ -19,8 +19,6 @@ class TreeConverger:
         random_node1 = cls.__get_random_node(tree1_copy)
         random_node2 = cls.__get_random_node(tree2_copy)
 
-        print(random_node1, random_node2)
-
         if cls.__is_root(tree1_copy, random_node1):
             tree1_copy.root = random_node2
         if cls.__is_root(tree2_copy, random_node2):

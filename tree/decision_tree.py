@@ -1,7 +1,7 @@
 from random import choice
 from anytree import Node, RenderTree
 from typing import List, Dict, Iterable
-from Agents.Agent import Agent
+from agent_interfaces.isignaler import ISignaler
 import pandas as pd
 
 OPTIONAL_OUTPUTS = {
@@ -11,15 +11,15 @@ OPTIONAL_OUTPUTS = {
 }
 
 
-class DecisionTree(Agent):
-    def __init__(self, agents: List[Agent]):
+class DecisionTree(ISignaler):
+    def __init__(self, agents: List[ISignaler]):
         self.n_outputs = 3
         self.agents = self.__init_agents(agents)
         self.nodes = self.__init_nodes()
         self.root = self.nodes[0]
         self.__create_tree()
 
-    def __init_agents(self, agents: List[Agent]) -> Dict[str, Agent]:
+    def __init_agents(self, agents: List[ISignaler]) -> Dict[str, ISignaler]:
         return {agent().id(): agent() for agent in agents}
 
     def __init_nodes(self):

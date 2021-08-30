@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class TRIXAgent(Agent):
+class TRIXIAgent(IAgent):
     def __init__(self, window=15):
         self.window = window
         self.column_name = f"trix_{window}"

@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 import ta.momentum as momentum
 
 
-class StochasticRSIAgent(Agent):
+class StochasticRSIIAgent(IAgent):
     def __init__(self, window=14, smooth1=3, smooth2=3):
         self.window = window
         self.smooth1 = smooth1

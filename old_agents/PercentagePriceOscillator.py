@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 import ta.momentum as momentum
 
 
-class PPOAgent(Agent):
+class PPOIAgent(IAgent):
     def __init__(self, slow_window=26, fast_window=12, signal_window=9):
         self.slow_window = slow_window
         self.fast_window = fast_window

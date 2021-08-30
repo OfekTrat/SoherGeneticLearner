@@ -1,11 +1,11 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 import ta.momentum as momentum
 
 
 TREND_DIFF = 2
 
-class KAMAAgent(Agent):
+class KAMAIAgent(IAgent):
     def __init__(self, window=10, pow1=2, pow2=30):
         self.window = window
         self.pow1 = pow1

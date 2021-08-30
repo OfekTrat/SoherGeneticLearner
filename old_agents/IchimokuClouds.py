@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class ICAgent(Agent):
+class ICIAgent(IAgent):
     def __init__(self, window1=9, window2=26, window3=52):
         self.window1 = window1
         self.window2 = window2

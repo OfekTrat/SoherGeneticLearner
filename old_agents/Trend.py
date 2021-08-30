@@ -1,9 +1,9 @@
 import pandas as pd
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 from utils.trend_detector import detect_trends
 
 
-class TrendAgent(Agent):
+class TrendIAgent(IAgent):
     def __init__(self):
         self.n_outputs = 3
 

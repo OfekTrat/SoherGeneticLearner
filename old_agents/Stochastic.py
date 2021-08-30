@@ -1,12 +1,12 @@
 import pandas as pd
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.momentum as momentum
 
 
 AGENT_TYPE = "Stochastic"
 
 
-class StochasticAgent(Agent):
+class StochasticIAgent(IAgent):
     def __init__(self, window=14, smooth_window=3):
         self.n_outputs = 3
         self.window = window

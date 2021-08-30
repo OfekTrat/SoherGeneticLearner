@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.trend as trend
 import pandas as pd
 
 
-class PSARAgent(Agent):
+class PSARIAgent(IAgent):
     def __init__(self, step=0.02, max_step=0.2):
         self.step = step
         self.max_step = max_step

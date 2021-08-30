@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.momentum as momentum
 import pandas as pd
 
 
-class UltimateOscillatorAgent(Agent):
+class UltimateOscillatorIAgent(IAgent):
     def __init__(self, window1=7, window2=14, window3=28):
         self.window1 = window1
         self.window2 = window2

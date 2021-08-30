@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import ta.volatility as volatility
 import pandas as pd
 
 
-class KeltnerChannelAgent(Agent):
+class KeltnerChannelIAgent(IAgent):
     def __init__(self, window=20, window_atr=10):
         self.window = window
         self.window_atr = window_atr

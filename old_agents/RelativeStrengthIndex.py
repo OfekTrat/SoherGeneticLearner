@@ -1,9 +1,9 @@
-from .Agent import Agent
+from agent_interfaces.Agent import IAgent
 import pandas as pd
 import ta.momentum as momentum
 
 
-class RSIAgent(Agent):
+class RSIIAgent(IAgent):
     def __init__(self, window=14):
         self.window = window
         self.column_name = f"rsi_{window}"
