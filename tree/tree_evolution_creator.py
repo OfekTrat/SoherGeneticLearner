@@ -4,7 +4,7 @@ from .tree_evolution import TreeEvolution
 
 
 class TreeEvolutionCreator:
-    N_TREES = 10
+    N_TREES = 50
     MUTATED_PERCENTAGE = 0.2
     CONVERGED_PERCENTAGE = 0.5
     OLD_TREES_PERCENTAGE = 0.1
